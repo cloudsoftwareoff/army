@@ -43,10 +43,10 @@ Contributions are welcome! Please fork the repository and create a pull request 
 
 🛡 Intellectual Property Rights
 1. The Developer shall retain all rights, title, and interest in any pre-existing intellectual
-property incorporated into the Website, including but not limited to software,
+property incorporated into the App, including but not limited to software,
 graphics, and content.
 2. Upon full payment of the Total Fee, the Developer grants the Client a non-exclusive,
-perpetual, worldwide license to use, display, and modify the Website and its
+perpetual, worldwide license to use, display, and modify the App and its
 content
 
 Creative Commons Attribution-NonCommercial 4.0 International License
