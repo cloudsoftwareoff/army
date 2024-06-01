@@ -33,13 +33,15 @@ public class CitizenListActivity extends AppCompatActivity {
         loadCitizens();
     }
 
-    private void loadCitizens() {
+    public void loadCitizens() {
         CollectionReference citizensRef = db.collection("citizens");
         citizensRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     Citizen citizen = document.toObject(Citizen.class);
-                    citizens.add(citizen);
+                    if(citizen.isEighteenOrOlder()) {
+                        citizens.add(citizen);
+                    }
                 }
                 adapter.notifyDataSetChanged();
             } else {

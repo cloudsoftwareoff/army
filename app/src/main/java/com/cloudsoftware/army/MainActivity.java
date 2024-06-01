@@ -23,7 +23,7 @@ Button start=findViewById(R.id.start);
 
 
 start.setOnClickListener(event->{
-    Intent intent = new Intent(this, CitizenListActivity.class);
+    Intent intent = new Intent(this, AuthActivity.class);
     startActivity(intent);
 });
         // Initialize Firestore

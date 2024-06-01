@@ -9,6 +9,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+
 import java.util.List;
 
 public class CitizenAdapter extends BaseAdapter {
@@ -44,6 +46,11 @@ public class CitizenAdapter extends BaseAdapter {
         }
 
         Citizen citizen = citizens.get(position);
+        final ImageView user_gender = convertView.findViewById(R.id.user_image);
+
+        if (citizen.getGender().equals("Male")) {
+            user_gender.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.male));
+        }
 
         TextView nameView = convertView.findViewById(R.id.name);
         TextView cinView = convertView.findViewById(R.id.cin_num);
