@@ -40,7 +40,9 @@ public class AdminHomeActivity extends AppCompatActivity {
             if (task.isSuccessful()) {
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     Citizen citizen = document.toObject(Citizen.class);
-                    citizens.add(citizen);
+                    if(citizen.isEighteenOrOlder()) {
+                        citizens.add(citizen);
+                    }
                 }
                 adapter.notifyDataSetChanged();
             } else {

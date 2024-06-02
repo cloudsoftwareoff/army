@@ -4,6 +4,10 @@ import android.os.Bundle;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
@@ -19,13 +23,28 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-Button start=findViewById(R.id.start);
+        FirebaseApp.initializeApp(this);
+        Button start=findViewById(R.id.start);
+        Button citizen =findViewById(R.id.citizen);
 
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            Intent intent = new Intent(MainActivity.this, AdminHomeActivity.class);
+            startActivity(intent);
+            finish();
+        }
 
-start.setOnClickListener(event->{
-    Intent intent = new Intent(this, AuthActivity.class);
-    startActivity(intent);
-});
+        start.setOnClickListener(event->{
+            Intent intent = new Intent(this, AuthActivity.class);
+            startActivity(intent);
+        });
+
+        // citizen portal
+        citizen.setOnClickListener(event->{
+            Intent intent = new Intent(this, CitizenJoin.class);
+            startActivity(intent);
+        });
         // Initialize Firestore
        // db = FirebaseFirestore.getInstance();
 

@@ -1,3 +1,4 @@
+
 package com.cloudsoftware.army;
 
 import android.content.Context;
@@ -41,22 +42,32 @@ public class CitizenAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        ViewHolder holder;
+
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.citizen, parent, false);
+            holder = new ViewHolder();
+            holder.user_gender = convertView.findViewById(R.id.user_image);
+            holder.nameView = convertView.findViewById(R.id.name);
+            holder.cinView = convertView.findViewById(R.id.cin_num);
+            holder.user_age = convertView.findViewById(R.id.user_age);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
         }
 
         Citizen citizen = citizens.get(position);
-        final ImageView user_gender = convertView.findViewById(R.id.user_image);
 
         if (citizen.getGender().equals("Male")) {
-            user_gender.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.male));
+            holder.user_gender.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.male));
+        } else  {
+            holder.user_gender.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.female));
         }
 
-        TextView nameView = convertView.findViewById(R.id.name);
-        TextView cinView = convertView.findViewById(R.id.cin_num);
+        holder.user_age.setText(Utility.calculateAge(citizen.getBirthdate()));
+        holder.nameView.setText(citizen.getFirstName() + " " + citizen.getLastName());
+        holder.cinView.setText(citizen.getCin());
 
-        nameView.setText(citizen.getFirstName() + " " + citizen.getLastName());
-        cinView.setText(citizen.getCin());
         convertView.setOnClickListener(v -> {
             Intent intent = new Intent(context, CitizenDetailActivity.class);
             intent.putExtra("CITIZEN_CIN", citizen.getCin());
@@ -67,5 +78,12 @@ public class CitizenAdapter extends BaseAdapter {
         });
 
         return convertView;
+    }
+
+    private static class ViewHolder {
+        ImageView user_gender;
+        TextView nameView;
+        TextView cinView;
+        TextView user_age;
     }
 }

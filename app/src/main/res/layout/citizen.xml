@@ -27,6 +27,13 @@
                 android:src="@drawable/female"
                    android:contentDescription="TODO" />
             <TextView
+                android:id="@+id/user_age"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="10y"
+                android:gravity="bottom"
+                />
+            <TextView
                 android:id="@+id/name"
                 android:focusable="false"
                 android:layout_width="0dp"

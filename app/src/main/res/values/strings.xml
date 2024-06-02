@@ -4,4 +4,7 @@
     <string name="password">Password</string>
     <string name="signup">Create account</string>
     <string name="login">Sign In</string>
+    <string name="date_of_birth">Date of birth (dd/mm/yyyy)</string>
+    <string name="cin_number">CIN Number</string>
+    <string name="verify">Verify</string>
 </resources>
