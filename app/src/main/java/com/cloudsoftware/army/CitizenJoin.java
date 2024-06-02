@@ -1,11 +1,13 @@
 package com.cloudsoftware.army;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -40,28 +42,44 @@ public class CitizenJoin extends AppCompatActivity {
              birthDate.setError("Invalid birthdate");
              return;
          }
-
+fetchUserData(_cin,_birth);
 
 
 
         });
     }
-    private void fetchUserData(String cin) {
+    private void fetchUserData(String cin, String birthDate) {
         db.collection("citizens").document(cin).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();
                 if (document.exists()) {
                     Citizen citizen = document.toObject(Citizen.class);
                     if (citizen != null) {
-                        Toast.makeText(this, "Citizen Found: " + citizen.getFirstName(), Toast.LENGTH_LONG).show();
+                        if (citizen.getBirthdate().equals(birthDate)) {
+                            Intent intent = new Intent(CitizenJoin.this, UserProfileActivity.class);
+                            intent.putExtra("CITIZEN", citizen);
+                            startActivity(intent);
+                        } else {
+                            showPopup("Invalid Birthdate", "The birthdate does not match our records.");
+                        }
                     }
                 } else {
-                    Toast.makeText(this, "No such citizen found", Toast.LENGTH_SHORT).show();
+                    showPopup("No Citizen Found", "No such citizen found.");
                 }
             } else {
-                Toast.makeText(this, "Error fetching data", Toast.LENGTH_SHORT).show();
+                showPopup("Error", "Error fetching data.");
             }
         });
     }
+
+    private void showPopup(String title, String message) {
+        new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok, null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
+
 
 }

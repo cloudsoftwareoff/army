@@ -1,11 +1,14 @@
 package com.cloudsoftware.army;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class Citizen {
+public class Citizen implements Parcelable {
     private String cin;
     private String firstName;
     private String lastName;
@@ -21,7 +24,39 @@ public class Citizen {
         this.birthdate = birthdate;
         this.gender = gender;
     }
+    protected Citizen(Parcel in) {
+        firstName = in.readString();
+        lastName = in.readString();
+        cin = in.readString();
+        birthdate = in.readString();
+        gender = in.readString();
+    }
 
+    public static final Creator<Citizen> CREATOR = new Creator<Citizen>() {
+        @Override
+        public Citizen createFromParcel(Parcel in) {
+            return new Citizen(in);
+        }
+
+        @Override
+        public Citizen[] newArray(int size) {
+            return new Citizen[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(firstName);
+        dest.writeString(lastName);
+        dest.writeString(cin);
+        dest.writeString(birthdate);
+        dest.writeString(gender);
+    }
     // Getters and setters
     public String getCin() { return cin; }
     public void setCin(String cin) { this.cin = cin; }
