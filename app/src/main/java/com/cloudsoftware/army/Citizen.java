@@ -15,14 +15,19 @@ public class Citizen implements Parcelable {
     private String birthdate;
     private String gender;
 
+    //"Eligible", "Court", "Warrant", "Studying"
+
+    private String status;
+
     public Citizen() {}
 
-    public Citizen(String cin, String firstName, String lastName, String birthdate, String gender) {
+    public Citizen(String cin, String firstName, String lastName, String birthdate, String gender,String status) {
         this.cin = cin;
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthdate = birthdate;
         this.gender = gender;
+        this.status=status;
     }
     protected Citizen(Parcel in) {
         firstName = in.readString();
@@ -30,6 +35,7 @@ public class Citizen implements Parcelable {
         cin = in.readString();
         birthdate = in.readString();
         gender = in.readString();
+        status=in.readString();
     }
 
     public static final Creator<Citizen> CREATOR = new Creator<Citizen>() {
@@ -56,11 +62,13 @@ public class Citizen implements Parcelable {
         dest.writeString(cin);
         dest.writeString(birthdate);
         dest.writeString(gender);
+        dest.writeString(status);
     }
     // Getters and setters
     public String getCin() { return cin; }
     public void setCin(String cin) { this.cin = cin; }
-
+    public  String getStatus(){return  status;}
+    public  void setStatus(String status){ this.status=status;}
     public String getFirstName() { return firstName; }
     public void setFirstName(String firstName) { this.firstName = firstName; }
 
