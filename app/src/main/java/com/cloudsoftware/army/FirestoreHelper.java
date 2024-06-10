@@ -3,17 +3,14 @@ package com.cloudsoftware.army;
 
 
 import android.content.Context;
-import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.Task;
+import com.cloudsoftware.army.models.Citizen;
+import com.cloudsoftware.army.models.Submission;
+import com.cloudsoftware.army.models.UserStatus;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class FirestoreHelper {
 

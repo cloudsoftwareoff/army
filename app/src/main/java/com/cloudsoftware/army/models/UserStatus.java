@@ -1,4 +1,4 @@
-package com.cloudsoftware.army;
+package com.cloudsoftware.army.models;
 
 
 public class UserStatus {

@@ -1,4 +1,4 @@
-package com.cloudsoftware.army;
+package com.cloudsoftware.army.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;

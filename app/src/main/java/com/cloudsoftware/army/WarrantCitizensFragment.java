@@ -8,9 +8,11 @@ import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import com.google.firebase.firestore.CollectionReference;
+
+import com.cloudsoftware.army.adapters.CitizenAdapter;
+import com.cloudsoftware.army.models.Citizen;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
+
 import java.util.ArrayList;
 import java.util.List;
 

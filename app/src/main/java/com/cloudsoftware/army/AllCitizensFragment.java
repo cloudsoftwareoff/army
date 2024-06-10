@@ -11,6 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.cloudsoftware.army.adapters.CitizenAdapter;
+import com.cloudsoftware.army.models.Citizen;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -38,21 +40,19 @@ public class AllCitizensFragment extends Fragment {
     }
 
     private void loadCitizens() {
-        // Show the progress bar
         progressBar.setVisibility(View.VISIBLE);
 
         CitizenRepository citizenRepository = new CitizenRepository();
         citizenRepository.fetchCitizensByStatus("Eligible", fetchedCitizens -> {
-            // Hide the progress bar
+
             progressBar.setVisibility(View.GONE);
 
             citizens.addAll(fetchedCitizens);
             adapter.notifyDataSetChanged();
         }, () -> {
-            // Hide the progress bar
+
             progressBar.setVisibility(View.GONE);
 
-            // Handle failure (e.g., show a message)
         });
     }
 }

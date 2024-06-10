@@ -1,5 +1,6 @@
 package com.cloudsoftware.army;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import com.cloudsoftware.army.models.Submission;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
@@ -33,6 +36,12 @@ public class SubmissionListFragment extends Fragment {
         listView.setAdapter(adapter);
         db = FirebaseFirestore.getInstance();
         loadSubmissions();
+        listView.setOnItemClickListener((parent, view1, position, id) -> {
+            Submission clickedSubmission = submissions.get(position);
+            Intent intent = new Intent(getActivity(), SubmissionDetailActivity.class);
+            intent.putExtra("SUBMISSION", clickedSubmission);
+            startActivity(intent);
+        });
         return view;
     }
 

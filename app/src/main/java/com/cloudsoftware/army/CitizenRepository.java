@@ -1,7 +1,7 @@
 package com.cloudsoftware.army;
 
+import com.cloudsoftware.army.models.Citizen;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 

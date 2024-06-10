@@ -1,24 +1,25 @@
 package com.cloudsoftware.army;
 
-import android.content.ClipData;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.firestore.DocumentSnapshot;
+import com.cloudsoftware.army.models.Citizen;
+import com.cloudsoftware.army.models.Submission;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.type.DateTime;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -27,14 +28,15 @@ import java.util.List;
 public class UserProfileActivity extends AppCompatActivity {
 
     private static final int PICK_DOCUMENT_REQUEST = 1;
-
+    private Spinner submissionTypeSpinner;
     private FirebaseFirestore db;
-    private TextView nameView, cinView, birthdateView, genderView, statusView, notificationsView;
-    private Button pickFiles;
-    private TextView tvSelectedFilePaths;
-    Citizen citizen;
-    private List<String> selectedFilePaths = new ArrayList<>();
+    private TextView nameView, cinView, birthdateView, genderView, statusView, notificationsView, tvSelectedFilePaths;
+    private ProgressDialog progressDialog;
+    private List<Uri> selectedFilePaths = new ArrayList<>();
+    private List<String> selectedFilesNames = new ArrayList<>();
     private List<String> documents = new ArrayList<>();
+    private Citizen citizen;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,62 +50,91 @@ public class UserProfileActivity extends AppCompatActivity {
         genderView = findViewById(R.id.gender);
         statusView = findViewById(R.id.status);
         notificationsView = findViewById(R.id.notifications);
-       Button btnPickFile = findViewById(R.id.btn_pick_file);
+        Button btnPickFile = findViewById(R.id.btn_pick_file);
         Button submit = findViewById(R.id.btn_submit);
         tvSelectedFilePaths = findViewById(R.id.tv_selected_file_paths);
 
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Uploading files...");
+        progressDialog.setCancelable(false);
+        submissionTypeSpinner = findViewById(R.id.spinner_list);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.submission_types, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // Apply the adapter to the spinner
+        submissionTypeSpinner.setAdapter(adapter);
         btnPickFile.setOnClickListener(v -> pickDocument());
 
-         citizen = getIntent().getParcelableExtra("CITIZEN");
+        citizen = getIntent().getParcelableExtra("CITIZEN");
         if (citizen != null) {
             displayUserData(citizen);
-
         }
 
-        pickFiles.setOnClickListener(view -> {
-            pickDocument();
-        });
-        submit.setOnClickListener(event->{
-        UploadDocument(selectedFilePaths);
-            Calendar calendar = Calendar.getInstance();
-            Date currentDate = calendar.getTime();
-        Submission submission =new Submission(
-                null,
-                citizen.getCin(),
-                documents,
-                currentDate,
-                "study",
-                "",
-                "pending");
-
-
+        // submit
+        submit.setOnClickListener(event -> {
+            if (!selectedFilePaths.isEmpty()) {
+                progressDialog.show();
+                uploadDocuments(selectedFilePaths, uriList -> {
+                    Calendar calendar = Calendar.getInstance();
+                    Date currentDate = calendar.getTime();
+                    Submission submission = new Submission(
+                            null,
+                            citizen.getCin(),
+                            uriList,
+                            currentDate,
+                            submissionTypeSpinner.getSelectedItem().toString(),
+                            "",
+                            "pending"
+                    );
+                    addSubmissionToFirestore(submission);
+                });
+            }
         });
     }
-    private void UploadDocument(List<String> files) {
-        if (selectedFilePaths.isEmpty()) {
-            // No file selected
+
+    private void uploadDocuments(List<Uri> files, OnDocumentsUploaded callback) {
+        if (files.isEmpty()) {
             return;
         }
 
-         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-        for (String filePath : files) {
-            Uri fileUri = Uri.fromFile(new File(filePath));
-            StorageReference fileRef = storageRef.child("documents/"+citizen.getCin()+"/" + fileUri.getLastPathSegment());
+        List<String> uploadedDocumentUrls = new ArrayList<>();
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        for (Uri filePath : files) {
+            StorageReference fileRef = storageRef.child("documents/" + citizen.getCin() + "/" + filePath.getLastPathSegment());
 
-            fileRef.putFile(fileUri)
+            fileRef.putFile(filePath)
                     .addOnSuccessListener(taskSnapshot -> {
-                        // File uploaded successfully
                         fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                            String downloadUrl = uri.toString();
-                            documents.add(downloadUrl);
-
+                            uploadedDocumentUrls.add(uri.toString());
+                            if (uploadedDocumentUrls.size() == files.size()) {
+                                progressDialog.dismiss();
+                                callback.onUploaded(uploadedDocumentUrls);
+                            }
                         });
                     })
                     .addOnFailureListener(e -> {
-                        // Handle unsuccessful uploads
-
+                        progressDialog.dismiss();
+                        showPopup("Error", "Failed to upload file: " + filePath.getLastPathSegment());
                     });
         }
+    }
+
+    private void addSubmissionToFirestore(Submission submission) {
+        // Create a new document reference
+        DocumentReference documentReference = db.collection("submissions").document();
+        String submissionId = documentReference.getId();
+        submission.setSubmissionId(submissionId);
+
+        // Add the submission to Firestore
+        documentReference
+                .set(submission)
+                .addOnSuccessListener(aVoid -> {
+                    showPopup("Success", "Submission added successfully.");
+                })
+                .addOnFailureListener(e -> {
+                    showPopup("Error", "Failed to add submission.");
+                });
     }
 
 
@@ -115,8 +146,6 @@ public class UserProfileActivity extends AppCompatActivity {
         statusView.setText("Status: " + citizen.getStatus());
     }
 
-
-
     private void showPopup(String title, String message) {
         new AlertDialog.Builder(this)
                 .setTitle(title)
@@ -125,6 +154,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
     }
+
     private void pickDocument() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("*/*");
@@ -132,18 +162,19 @@ public class UserProfileActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_DOCUMENT_REQUEST && resultCode == RESULT_OK && data != null) {
             Uri uri = data.getData();
             if (uri != null) {
-                String filePath = FileUtils.getPath(this, uri);
-                selectedFilePaths.add(filePath);
-                tvSelectedFilePaths.setText(filePath);
+                selectedFilePaths.add(uri);
+                selectedFilesNames.add(uri.getLastPathSegment());
+                tvSelectedFilePaths.setText(String.join("\n", selectedFilesNames));
             }
         }
     }
 
-
-
+    private interface OnDocumentsUploaded {
+        void onUploaded(List<String> uriList);
+    }
 }

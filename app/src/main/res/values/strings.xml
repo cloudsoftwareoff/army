@@ -7,6 +7,14 @@
     <string name="date_of_birth">Date of birth (dd/mm/yyyy)</string>
     <string name="cin_number">CIN Number</string>
     <string name="verify">Verify</string>
+    <string-array name="submission_types">
+        <item>Join</item>
+        <item>Study</item>
+        <item>Work</item>
+        <item>Medical</item>
+        <item>Other</item>
+
+    </string-array>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

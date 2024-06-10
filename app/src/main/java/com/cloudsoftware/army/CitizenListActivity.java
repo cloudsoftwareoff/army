@@ -5,6 +5,8 @@ import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.cloudsoftware.army.adapters.CitizenAdapter;
+import com.cloudsoftware.army.models.Citizen;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;

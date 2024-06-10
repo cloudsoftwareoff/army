@@ -53,7 +53,7 @@
                     android:id="@+id/start"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Start"
+                    android:text="Aministration"
                     android:layout_marginBottom="8dp" />
 
                 <Button

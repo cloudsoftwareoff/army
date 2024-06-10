@@ -1,0 +1,157 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:background="@drawable/gradient_background">
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_margin="4dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="1dp"
+        app:cardMaxElevation="2dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center_vertical">
+            <ImageView
+                android:id="@+id/go_back"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/arraw_back"
+                android:padding="8dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Submission Details"
+                android:textStyle="bold"
+                android:layout_weight="1"
+                android:gravity="center" />
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/arraw_back"
+                android:alpha="0"
+                android:padding="8dp" />
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="1dp"
+        app:cardMaxElevation="2dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:gravity="center_vertical">
+            <TextView
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Submission detail"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:gravity="center"/>
+    <TextView
+        android:id="@+id/cin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CIN"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Date"
+        android:textSize="18sp" />
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+
+    >
+
+
+    <TextView
+        android:id="@+id/type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Type"
+        android:layout_weight="1"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Status"
+        android:layout_weight="1"
+        android:textSize="18sp" />
+</LinearLayout>
+
+
+    <TextView
+        android:id="@+id/documents_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Documents:"
+        android:layout_marginTop="16dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/documents_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+        </LinearLayout></androidx.cardview.widget.CardView>
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="1dp"
+        app:cardMaxElevation="2dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:gravity="center_vertical">
+            <TextView
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Submission Statue"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:gravity="center"/>
+    <Spinner
+        android:id="@+id/status_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+        </LinearLayout></androidx.cardview.widget.CardView>
+
+    <Button
+        android:id="@+id/save_status_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Approve"
+        android:layout_marginTop="16dp" />
+    <Button
+        android:id="@+id/deny_status_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Deny"
+        android:layout_marginTop="16dp" />
+</LinearLayout>

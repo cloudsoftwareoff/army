@@ -1,21 +1,22 @@
 package com.cloudsoftware.army;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 
 public class FileUtils {
 
-    public static String getPath(Context context, Uri uri) {
-        String[] projection = {MediaStore.Files.FileColumns.DATA};
-        Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
+    @SuppressLint("Range")
+    public static String getFileName(Context context, Uri uri) {
+        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+        String fileName = null;
         if (cursor != null && cursor.moveToFirst()) {
-            int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA);
-            String filePath = cursor.getString(columnIndex);
+            fileName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
             cursor.close();
-            return filePath;
         }
-        return null;
+        return fileName;
     }
 }

@@ -1,5 +1,5 @@
 
-package com.cloudsoftware.army;
+package com.cloudsoftware.army.adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +11,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
+
+import com.cloudsoftware.army.CitizenDetailActivity;
+import com.cloudsoftware.army.R;
+import com.cloudsoftware.army.Utility;
+import com.cloudsoftware.army.models.Citizen;
 
 import java.util.List;
 

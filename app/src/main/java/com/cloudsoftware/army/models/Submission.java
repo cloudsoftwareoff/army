@@ -1,9 +1,12 @@
-package com.cloudsoftware.army;
+package com.cloudsoftware.army.models;
+
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import java.util.Date;
 import java.util.List;
 
-public class Submission {
+public class Submission implements  Parcelable{
     private String submissionId;
     private String userId;
     private List<String> documentUrls;
@@ -23,6 +26,43 @@ public class Submission {
         this.submissionType = submissionType;
         this.note = note;
         this.status = status;
+    }
+    protected Submission(Parcel in) {
+        submissionId = in.readString();
+        userId = in.readString();
+        documentUrls = in.createStringArrayList();
+        submissionType = in.readString();
+        note = in.readString();
+        status = in.readString();
+        submissionDate = new Date(in.readLong());
+    }
+
+    public static final Parcelable.Creator<Submission> CREATOR = new Parcelable.Creator<Submission>() {
+        @Override
+        public Submission createFromParcel(Parcel in) {
+            return new Submission(in);
+        }
+
+        @Override
+        public Submission[] newArray(int size) {
+            return new Submission[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(submissionId);
+        dest.writeString(userId);
+        dest.writeStringList(documentUrls);
+        dest.writeString(submissionType);
+        dest.writeString(note);
+        dest.writeString(status);
+        dest.writeLong(submissionDate.getTime());
     }
 
     public String getSubmissionId() {
