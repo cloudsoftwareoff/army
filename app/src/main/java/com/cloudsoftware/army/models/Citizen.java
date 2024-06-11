@@ -15,7 +15,7 @@ public class Citizen implements Parcelable {
     private String birthdate;
     private String gender;
 
-    //"Eligible", "Court", "Warrant", "Studying"
+    //"Eligible", "Court", "Warrant","Exempt"
 
     private String status;
 

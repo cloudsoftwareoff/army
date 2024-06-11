@@ -2,6 +2,7 @@ package com.cloudsoftware.army;
 
 import com.cloudsoftware.army.models.Citizen;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
@@ -22,7 +23,23 @@ public class CitizenRepository {
         void onStatusUpdateComplete();
         void onStatusUpdateFailed();
     }
-
+    public void fetchCitizensByStatuses(List<String> statuses, Consumer<List<Citizen>> onSuccess, Runnable onFailure) {
+        db.collection("citizens")
+                .whereIn("status", statuses)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        List<Citizen> fetchedCitizens = new ArrayList<>();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Citizen citizen = document.toObject(Citizen.class);
+                            fetchedCitizens.add(citizen);
+                        }
+                        onSuccess.accept(fetchedCitizens);
+                    } else {
+                        onFailure.run();
+                    }
+                });
+    }
     public void changeCitizenStatus(String userId, String status, Runnable onSuccess, Runnable onFailure) {
         Map<String, Object> data = new HashMap<>();
         data.put("status", status);

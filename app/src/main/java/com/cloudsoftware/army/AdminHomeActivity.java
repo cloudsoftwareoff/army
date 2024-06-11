@@ -9,13 +9,20 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.cloudsoftware.army.adapters.CitizenAdapter;
+import com.cloudsoftware.army.fragment.CitizensFragment;
 import com.cloudsoftware.army.models.Citizen;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -40,11 +47,47 @@ public class AdminHomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_admin_home);
 
         listView = findViewById(R.id.citizen);
-        citizens = new ArrayList<>();
-        adapter = new CitizenAdapter(this, citizens);
-        listView.setAdapter(adapter);
+       // citizens = new ArrayList<>();
+        //adapter = new CitizenAdapter(this, citizens);
+
         mAuth = FirebaseAuth.getInstance();
         citizenRepository = new CitizenRepository();
+        ViewPager2 viewPager = findViewById(R.id.view_pager);
+        TabLayout tabLayout = findViewById(R.id.tab_layout);
+
+        viewPager.setAdapter(new FragmentStateAdapter(this) {
+            @NonNull
+            @Override
+            public Fragment createFragment(int position) {
+                switch (position) {
+                    case 1:
+                        return CitizensFragment.newInstance("Penalisé");
+                    case 2:
+                        return CitizensFragment.newInstance("Exempt");
+                    default:
+                        return CitizensFragment.newInstance("Eligible");
+                }
+            }
+
+            @Override
+            public int getItemCount() {
+                return 3;
+            }
+        });
+
+        new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
+            switch (position) {
+                case 0:
+                    tab.setText("Eligible");
+                    break;
+                case 1:
+                    tab.setText("Penalisé");
+                    break;
+                case 2:
+                    tab.setText("Exempt");
+                    break;
+            }
+        }).attach();
 
         DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
         LinearLayout drawer = findViewById(R.id._nav_view);
@@ -57,7 +100,7 @@ public class AdminHomeActivity extends AppCompatActivity {
         progressDialog.setMessage("Loading...");
         progressDialog.setCancelable(false);
 
-        loadCitizens();
+        //loadCitizens();
 
         // Drawer
         menu.setOnClickListener(event -> drawerLayout.openDrawer(GravityCompat.START));
@@ -66,24 +109,8 @@ public class AdminHomeActivity extends AppCompatActivity {
         log_out.setOnClickListener(v -> showLogoutDialog());
 
         start_recruiting.setOnClickListener(event -> {
-            Intent intent = new Intent(this, ManageCitizenActivity.class);
+            Intent intent = new Intent(this, SubmissionListActivity.class);
             startActivity(intent);
-            // Set all citizens' status to "recruit"
-          /*  progressDialog.setMessage("Updating status...");
-            progressDialog.show();
-            citizenRepository.setAllCitizensStatus("Eligible", citizens, new CitizenRepository.StatusUpdateCallback() {
-                @Override
-                public void onStatusUpdateComplete() {
-                    progressDialog.dismiss();
-                    showPopup("Success", "All citizens' status updated successfully.");
-                }
-
-                @Override
-                public void onStatusUpdateFailed() {
-                    progressDialog.dismiss();
-                    showPopup("Error", "Failed to update some citizens' status.");
-                }
-            });*/
         });
     }
 
@@ -108,6 +135,7 @@ public class AdminHomeActivity extends AppCompatActivity {
         CollectionReference citizensRef = db.collection("citizens");
         citizensRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
+                citizens.clear();
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     Citizen citizen = document.toObject(Citizen.class);
                     if (citizen.isEighteenOrOlder()) {

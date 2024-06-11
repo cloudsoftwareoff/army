@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,9 +25,10 @@ public class SubmissionDetailActivity extends AppCompatActivity {
 
     private TextView cinView, dateView, typeView, statusView;
     private RecyclerView documentsRecyclerView;
-    private Spinner statusSpinner;
+    private Spinner statusSpinner, userStatusSpinner;
     private Button saveStatusButton;
     private Submission submission;
+    private EditText noteEdit;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,26 +40,30 @@ public class SubmissionDetailActivity extends AppCompatActivity {
         typeView = findViewById(R.id.type);
         statusView = findViewById(R.id.status);
         documentsRecyclerView = findViewById(R.id.documents_recycler_view);
-        statusSpinner = findViewById(R.id.status_spinner);
+        statusSpinner = findViewById(R.id.submission_status_spinner);
+        userStatusSpinner = findViewById(R.id.citizen_status_spinner);
         saveStatusButton = findViewById(R.id.save_status_button);
+        noteEdit = findViewById(R.id.noteEdit);
 
         submission = getIntent().getParcelableExtra("SUBMISSION");
         if (submission != null) {
             displaySubmissionDetails(submission);
         }
 
-        // Set up status spinner
+        // citizen status adapter
+        ArrayAdapter<CharSequence> citizen_status_adapter = ArrayAdapter.createFromResource(this,
+                R.array.citizen_status, android.R.layout.simple_spinner_item);
+        citizen_status_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        userStatusSpinner.setAdapter(citizen_status_adapter);
+
+
+        // Submission adapter
         List<String> statusOptions = Arrays.asList("pending", "approved", "rejected");
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, statusOptions);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         statusSpinner.setAdapter(adapter);
 
-        saveStatusButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveStatus();
-            }
-        });
+        saveStatusButton.setOnClickListener(v -> saveStatus());
     }
 
     private void displaySubmissionDetails(Submission submission) {
@@ -71,18 +77,34 @@ public class SubmissionDetailActivity extends AppCompatActivity {
         documentsRecyclerView.setAdapter(adapter);
 
         // Set current status in spinner
-        int statusPosition = ((ArrayAdapter<String>) statusSpinner.getAdapter()).getPosition(submission.getStatus());
-        statusSpinner.setSelection(statusPosition);
+        // Ensure adapter is set before accessing it
+        if (statusSpinner.getAdapter() != null) {
+            int statusPosition = ((ArrayAdapter<String>) statusSpinner.getAdapter()).getPosition(submission.getStatus());
+            statusSpinner.setSelection(statusPosition);
+        }
     }
 
     private void saveStatus() {
         String newStatus = statusSpinner.getSelectedItem().toString();
         submission.setStatus(newStatus);
+        submission.setNote(noteEdit.getText().toString());
+
+
 
         // Save the new status to Firestore
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("citizens").document(submission.getUserId())
+                        .update("status",statusSpinner.getSelectedItem().toString())
+                                .addOnSuccessListener(aVoid->{
+                                    //success
+                                })
+                                        .addOnFailureListener(e->{
+                                            Toast.makeText(SubmissionDetailActivity.this, "Failed to citizen status", Toast.LENGTH_SHORT).show()        ;
+
+
+                                        });
         db.collection("submissions").document(submission.getSubmissionId())
-                .update("status", newStatus)
+                .update("status", newStatus, "note", submission.getNote())
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(SubmissionDetailActivity.this, "Status updated successfully", Toast.LENGTH_SHORT).show();
                     statusView.setText("Status: " + newStatus);

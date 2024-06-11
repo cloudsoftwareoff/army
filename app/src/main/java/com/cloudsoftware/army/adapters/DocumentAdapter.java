@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -38,10 +39,7 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.ViewHo
         String documentUrl = documentUrls.get(position);
         holder.documentUrlTextView.setText(documentUrl);
 
-        holder.viewButton.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(documentUrl));
-            context.startActivity(intent);
-        });
+
 
         holder.downloadButton.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(documentUrl));
@@ -56,13 +54,13 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.ViewHo
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView documentUrlTextView;
-        Button viewButton;
-        Button downloadButton;
+
+        ImageView downloadButton;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             documentUrlTextView = itemView.findViewById(R.id.document_url_text_view);
-            viewButton = itemView.findViewById(R.id.view_button);
+
             downloadButton = itemView.findViewById(R.id.download_button);
         }
     }

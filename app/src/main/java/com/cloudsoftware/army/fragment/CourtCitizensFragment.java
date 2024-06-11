@@ -1,4 +1,4 @@
-package com.cloudsoftware.army;
+package com.cloudsoftware.army.fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.cloudsoftware.army.CitizenRepository;
+import com.cloudsoftware.army.R;
 import com.cloudsoftware.army.adapters.CitizenAdapter;
 import com.cloudsoftware.army.models.Citizen;
 import com.google.firebase.firestore.FirebaseFirestore;

@@ -1,4 +1,4 @@
-package com.cloudsoftware.army;
+package com.cloudsoftware.army.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.cloudsoftware.army.R;
 import com.cloudsoftware.army.models.Submission;
 
 import java.text.SimpleDateFormat;

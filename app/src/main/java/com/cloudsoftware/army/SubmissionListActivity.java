@@ -1,37 +1,44 @@
 package com.cloudsoftware.army;
 
 import android.os.Bundle;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
+
+import com.cloudsoftware.army.fragment.SubmissionListFragment;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
-public class ManageCitizenActivity extends AppCompatActivity {
+public class SubmissionListActivity extends AppCompatActivity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_manage_citizen);
+        setContentView(R.layout.activity_submission_list);
 
         ViewPager2 viewPager = findViewById(R.id.view_pager);
         TabLayout tabLayout = findViewById(R.id.tab_layout);
+        ImageView go_back =findViewById(R.id.go_back);
 
+
+        go_back.setOnClickListener(event->{
+            finish();
+        });
         viewPager.setAdapter(new FragmentStateAdapter(this) {
             @NonNull
             @Override
             public Fragment createFragment(int position) {
                 switch (position) {
-                    case 0:
-                        return new AllCitizensFragment();
                     case 1:
-                        return new SubmissionListFragment();
+                        return SubmissionListFragment.newInstance("approved");
                     case 2:
-                        return new CourtCitizensFragment();
+                        return SubmissionListFragment.newInstance("rejected");
                     default:
-                        return new AllCitizensFragment();
+                        return SubmissionListFragment.newInstance("pending");
                 }
             }
 
@@ -44,13 +51,13 @@ public class ManageCitizenActivity extends AppCompatActivity {
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
             switch (position) {
                 case 0:
-                    tab.setText("All Citizens");
+                    tab.setText("Pending");
                     break;
                 case 1:
-                    tab.setText("Submission");
+                    tab.setText("Approved");
                     break;
                 case 2:
-                    tab.setText("Court Citizens");
+                    tab.setText("Rejected");
                     break;
             }
         }).attach();

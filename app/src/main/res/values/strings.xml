@@ -15,6 +15,20 @@
         <item>Other</item>
 
     </string-array>
+
+    <string-array name="citizen_status">
+        <item>Eligible</item>
+        <item>Court</item>
+        <item>Warrant</item>
+        <item>Exempt</item>
+
+
+    </string-array>
+
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="note">Leave a note</string>
+    <string name="document_url">{Document URL}</string>
+    <string name="todo">TODO</string>
 </resources>
