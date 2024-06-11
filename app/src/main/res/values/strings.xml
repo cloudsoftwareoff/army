@@ -1,34 +1,58 @@
 <resources>
     <string name="app_name">ServiceLink</string>
-    <string name="email">Email Address</string>
-    <string name="password">Password</string>
-    <string name="signup">Create account</string>
-    <string name="login">Sign In</string>
-    <string name="date_of_birth">Date of birth (dd/mm/yyyy)</string>
-    <string name="cin_number">CIN Number</string>
-    <string name="verify">Verify</string>
+    <string name="email">عنوان البريد الإلكتروني</string>
+    <string name="password">كلمة المرور</string>
+    <string name="signup">إنشاء حساب</string>
+    <string name="login">تسجيل الدخول</string>
+    <string name="date_of_birth">تاريخ الميلاد (يوم/شهر/سنة)</string>
+    <string name="cin_number">رقم CIN</string>
+    <string name="verify">تحقق</string>
     <string-array name="submission_types">
-        <item>Join</item>
-        <item>Study</item>
-        <item>Work</item>
-        <item>Medical</item>
-        <item>Other</item>
-
+        <item>انضمام</item>
+        <item>رفض</item>
     </string-array>
+
 
     <string-array name="citizen_status">
-        <item>Eligible</item>
-        <item>Court</item>
-        <item>Warrant</item>
-        <item>Exempt</item>
-
-
+        <item>مؤهل</item>
+        <item>محكمة</item>
+        <item>مذكرة</item>
+        <item>معفي</item>
     </string-array>
+
 
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="note">Leave a note</string>
-    <string name="document_url">{Document URL}</string>
-    <string name="todo">TODO</string>
+    <string name="hello_blank_fragment">مرحبا أيها الجزء الفارغ</string>
+    <string name="note">اترك ملاحظة</string>
+    <string name="document_url">رابط المستند</string>
+    <string name="todo">مهام</string>
+    <string name="about_us">معلومات عنا</string>
+    <string name="log_out">تسجيل الخروج</string>
+    <string name="view_submission">عرض الإرسال</string>
+    <string name="citizen_details">تفاصيل المواطن</string>
+    <string name="citizen_mangement">إدارة المواطنين</string>
+    <string name="citizen_list">قائمة المواطنين:</string>
+    <string name="aministration">إدارة</string>
+    <string name="citizen">مواطن</string>
+    <string name="submission_details">تفاصيل الإرسال</string>
+    <string name="documents">المستندات:</string>
+    <string name="submission_statue">حالة الإرسال</string>
+    <string name="citizen_status">حالة المواطن</string>
+    <string name="save">حفظ</string>
+    <string name="submission_list">قائمة الإرسالات</string>
+    <string name="userdata">بيانات المستخدم</string>
+    <string name="new_submission">إرسال جديد</string>
+    <string name="pick_file">اختر ملف</string>
+    <string name="attach_documents">إرفاق المستندات:</string>
+    <string name="submit">إرسال</string>
+    <string name="submission">إرسال</string>
+    <string name="invalid_cin_number">Invalid cin number</string>
+    <string name="invalid_birthdate">Invalid birthdate</string>
+    <string name="the_birthdate_does_not_match_our_records">The birthdate does not match our records.</string>
+    <string name="no_citizen_found">No Citizen Found</string>
+    <string name="no_such_citizen_found">No such citizen found.</string>
+    <string name="email_field_required">Email field required</string>
+    <string name="password_required">Password required</string>
+
 </resources>

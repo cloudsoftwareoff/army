@@ -28,7 +28,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="UserData"
+                android:text="@string/userdata"
                 android:textStyle="bold"
                 android:layout_weight="1"
                 android:gravity="center" />
@@ -56,13 +56,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:padding="12dp">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:gravity="center"
-                android:text="Citizen Data"
-                />
+
             <TextView
                 android:id="@+id/name"
                 android:layout_width="wrap_content"
@@ -126,19 +120,22 @@
         android:layout_margin="4dp"
         app:cardCornerRadius="8dp"
         app:cardElevation="1dp"
+
         app:cardMaxElevation="2dp">
 
         <LinearLayout
+            android:id="@+id/new_app_linear"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
+
             android:padding="12dp">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:gravity="center"
-                android:text="Application"
+                android:text="@string/new_submission"
                 />
             <LinearLayout
                 android:layout_width="match_parent"
@@ -157,21 +154,32 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"/>
             </LinearLayout>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:padding="4dp"
 
-            <TextView
-                android:id="@+id/notifications"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Submission: "
-                android:textSize="18sp"
-                android:layout_marginTop="16dp"/>
+    >
+    <TextView
+        android:id="@+id/notifications"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/attach_documents"
+        android:textSize="18sp"
+        android:layout_weight="1"
+    />
 
-            <!-- Add button to pick files -->
-            <Button
-                android:id="@+id/btn_pick_file"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Pick File" />
+
+    <Button
+        android:id="@+id/btn_pick_file"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/pick_file" />
+
+
+</LinearLayout>
+
 
             <!-- TextView to display selected file paths -->
             <TextView
@@ -187,6 +195,37 @@
                 android:id="@+id/btn_submit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Submit" />
+                android:text="@string/submit"
+                android:layout_gravity="center"
+                />
         </LinearLayout></androidx.cardview.widget.CardView>
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="1dp"
+        app:cardMaxElevation="2dp">
+
+        <LinearLayout
+            android:id="@+id/apps_linear"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="12dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:text="@string/submission"
+                />
+            <ListView
+                android:id="@+id/submission_list_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
 </LinearLayout>

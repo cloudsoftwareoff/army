@@ -43,7 +43,7 @@
                     android:layout_width="78dp"
                     android:layout_height="wrap_content"
                     android:padding="8dp"
-                    android:text="Name"
+                    android:text="Manager"
                     android:textColor="#000000"
                     android:textSize="14sp"
                     android:gravity="center"
@@ -88,7 +88,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
 
-                            android:text="View Submission"/>
+                            android:text="@string/view_submission"/>
                     </LinearLayout>
                     <com.google.android.material.tabs.TabLayout
                         android:id="@+id/tab_layout"

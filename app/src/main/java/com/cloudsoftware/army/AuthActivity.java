@@ -36,12 +36,12 @@ private FirebaseFirestore db;
         //Login
         login_btn.setOnClickListener(event->{
             if(emailEdit.getText().equals("") || !emailEdit.getText().toString().contains("@")){
-                emailEdit.setError("Email field required");
+                emailEdit.setError(getString(R.string.email_field_required));
                 return;
 
             }
             if(passwordEdit.getText().toString().equals("")){
-                passwordEdit.setError("Password required");
+                passwordEdit.setError(getString(R.string.password_required));
                 return;
             }
             performLogin(emailEdit.getText().toString(),passwordEdit.getText().toString());
@@ -49,7 +49,7 @@ private FirebaseFirestore db;
         //Create account
         signup_btn.setOnClickListener(event->{
             if(emailEdit.getText().equals("") || !emailEdit.getText().toString().contains("@")){
-                emailEdit.setError("Email field required");
+                emailEdit.setError(getString(R.string.email_field_required));
                 return;
 
             }

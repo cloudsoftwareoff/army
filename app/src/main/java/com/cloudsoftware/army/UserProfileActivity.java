@@ -4,8 +4,12 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -13,10 +17,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.cloudsoftware.army.adapters.SubmissionAdapter;
 import com.cloudsoftware.army.models.Citizen;
 import com.cloudsoftware.army.models.Submission;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -32,11 +38,13 @@ public class UserProfileActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private TextView nameView, cinView, birthdateView, genderView, statusView, notificationsView, tvSelectedFilePaths;
     private ProgressDialog progressDialog;
-    private List<Uri> selectedFilePaths = new ArrayList<>();
-    private List<String> selectedFilesNames = new ArrayList<>();
-    private List<String> documents = new ArrayList<>();
+    private final List<Uri> selectedFilePaths = new ArrayList<>();
+    private final List<String> selectedFilesNames = new ArrayList<>();
+    private final List<String> documents = new ArrayList<>();
     private Citizen citizen;
-
+    private SubmissionAdapter submissionAdapter;
+    private List<Submission> submissions;
+    LinearLayout new_submission,submissionList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,25 +60,41 @@ public class UserProfileActivity extends AppCompatActivity {
         notificationsView = findViewById(R.id.notifications);
         Button btnPickFile = findViewById(R.id.btn_pick_file);
         Button submit = findViewById(R.id.btn_submit);
+        new_submission=findViewById(R.id.new_app_linear);
+        submissionList=findViewById(R.id.apps_linear);
+        ImageView go_back=findViewById(R.id.go_back);
+        ListView listView=findViewById(R.id.submission_list_view);
         tvSelectedFilePaths = findViewById(R.id.tv_selected_file_paths);
-
+        submissions = new ArrayList<>();
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Uploading files...");
         progressDialog.setCancelable(false);
+
         submissionTypeSpinner = findViewById(R.id.spinner_list);
+
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.submission_types, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
+        submissionAdapter = new SubmissionAdapter(this, submissions);
+        listView.setAdapter(submissionAdapter);
         // Apply the adapter to the spinner
         submissionTypeSpinner.setAdapter(adapter);
+
+
+        //pick date
         btnPickFile.setOnClickListener(v -> pickDocument());
 
         citizen = getIntent().getParcelableExtra("CITIZEN");
         if (citizen != null) {
             displayUserData(citizen);
         }
+        loadSubmissions();
 
+
+        go_back.setOnClickListener(event->{
+            finish();
+        });
         // submit
         submit.setOnClickListener(event -> {
             if (!selectedFilePaths.isEmpty()) {
@@ -137,13 +161,38 @@ public class UserProfileActivity extends AppCompatActivity {
                 });
     }
 
+    private void loadSubmissions() {
+        db.collection("submissions")
+                .whereEqualTo("userId", citizen.getCin())
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        submissions.clear();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Submission submission = document.toObject(Submission.class);
+                            submissions.add(submission);
+                            if(submission.getStatus().equals("pending")){
+                           //     new_submission.setVisibility(View.GONE);
+                            }
+                        }
+                        if (submissions.isEmpty()) {
+                         //   submissionList.setVisibility(View.GONE);
+                        } else {
+                            submissionList.setVisibility(View.VISIBLE);
+                        }
+                        submissionAdapter.notifyDataSetChanged();
+                    } else {
+                       // submissionList.setVisibility(View.GONE);
 
+                    }
+                });
+    }
     private void displayUserData(Citizen citizen) {
         nameView.setText("Name: " + citizen.getFirstName() + " " + citizen.getLastName());
         cinView.setText("CIN: " + citizen.getCin());
         birthdateView.setText("Birthdate: " + citizen.getBirthdate());
         genderView.setText("Gender: " + citizen.getGender());
-        statusView.setText("Status: " + citizen.getStatus());
+        statusView.setText(citizen.getStatus());
     }
 
     private void showPopup(String title, String message) {

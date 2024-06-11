@@ -37,6 +37,8 @@ public class WarrantCitizensFragment extends Fragment {
         return view;
     }
 
+
+
     private void loadCitizens() {
         CitizenRepository citizenRepository = new CitizenRepository();
         citizenRepository.fetchCitizensByStatus("Warrant", citizens -> {

@@ -34,7 +34,7 @@
                 android:layout_width="78dp"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                android:text="Submission List"
+                android:text="@string/submission_list"
                 android:textColor="#000000"
                 android:textSize="14sp"
                 android:gravity="center"

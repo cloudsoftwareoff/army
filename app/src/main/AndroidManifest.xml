@@ -18,9 +18,6 @@
         <activity
             android:name=".SubmissionDetailActivity"
             android:exported="false" />
-        <activity
-            android:name=".SubmissionActivity"
-            android:exported="false" />
 
         <activity
             android:name=".UserProfileActivity"

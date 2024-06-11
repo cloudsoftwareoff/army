@@ -12,12 +12,14 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.List;
+
 public class FirestoreHelper {
 
     private static final String TAG = "FirestoreHelper";
     private FirebaseFirestore db;
     private Context context;
-
+    private List<Submission> submissions;
     public FirestoreHelper(Context context) {
         this.db = FirebaseFirestore.getInstance();
         this.context = context;
