@@ -1,5 +1,6 @@
 package com.cloudsoftware.army;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 
@@ -15,7 +16,7 @@ import com.google.firebase.firestore.SetOptions;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-
+import android.content.Context;
 public class MainActivity extends AppCompatActivity {
     private FirebaseFirestore db;
 
@@ -30,7 +31,16 @@ public class MainActivity extends AppCompatActivity {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            Intent intent = new Intent(MainActivity.this, AdminHomeActivity.class);
+            SharedPreferences sharedPreferences = getSharedPreferences("my_prefs", Context.MODE_PRIVATE);
+
+            String userType = sharedPreferences.getString("user", "user");
+            if(userType.equals("admin")) {
+                Intent intent = new Intent(MainActivity.this, AdminHomeActivity.class);
+
+                startActivity(intent);
+                finish();
+            }
+            Intent intent = new Intent(MainActivity.this, LoggedUserProfileActivity.class);
             startActivity(intent);
             finish();
         }

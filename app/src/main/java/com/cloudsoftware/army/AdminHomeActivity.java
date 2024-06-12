@@ -116,10 +116,10 @@ public class AdminHomeActivity extends AppCompatActivity {
 
     private void showLogoutDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Logout");
-        builder.setMessage("Are you sure you want to logout?");
-        builder.setPositiveButton("Logout", (dialog, which) -> logout());
-        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+        builder.setTitle(R.string.logout);
+        builder.setMessage(R.string.are_you_sure_you_want_to_logout);
+        builder.setPositiveButton(R.string.logout, (dialog, which) -> logout());
+        builder.setNegativeButton(R.string.cancel, (dialog, which) -> dialog.dismiss());
         builder.show();
     }
 

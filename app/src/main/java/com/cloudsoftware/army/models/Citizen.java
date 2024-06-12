@@ -14,28 +14,29 @@ public class Citizen implements Parcelable {
     private String lastName;
     private String birthdate;
     private String gender;
-
-    //"Eligible", "Court", "Warrant","Exempt"
-
     private String status;
+    private String uid;
 
     public Citizen() {}
 
-    public Citizen(String cin, String firstName, String lastName, String birthdate, String gender,String status) {
+    public Citizen(String cin, String firstName, String lastName, String birthdate, String gender, String status, String uid) {
         this.cin = cin;
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthdate = birthdate;
         this.gender = gender;
-        this.status=status;
+        this.status = status;
+        this.uid = uid;
     }
+
     protected Citizen(Parcel in) {
         firstName = in.readString();
         lastName = in.readString();
         cin = in.readString();
         birthdate = in.readString();
         gender = in.readString();
-        status=in.readString();
+        status = in.readString();
+        uid = in.readString();
     }
 
     public static final Creator<Citizen> CREATOR = new Creator<Citizen>() {
@@ -63,23 +64,66 @@ public class Citizen implements Parcelable {
         dest.writeString(birthdate);
         dest.writeString(gender);
         dest.writeString(status);
+        dest.writeString(uid);
     }
+
     // Getters and setters
-    public String getCin() { return cin; }
-    public void setCin(String cin) { this.cin = cin; }
-    public  String getStatus(){return  status;}
-    public  void setStatus(String status){ this.status=status;}
-    public String getFirstName() { return firstName; }
-    public void setFirstName(String firstName) { this.firstName = firstName; }
+    public String getCin() {
+        return cin;
+    }
 
-    public String getLastName() { return lastName; }
-    public void setLastName(String lastName) { this.lastName = lastName; }
+    public void setCin(String cin) {
+        this.cin = cin;
+    }
 
-    public String getBirthdate() { return birthdate; }
-    public void setBirthdate(String birthdate) { this.birthdate = birthdate; }
+    public String getStatus() {
+        return status;
+    }
 
-    public String getGender() { return gender; }
-    public void setGender(String gender) { this.gender = gender; }
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getBirthdate() {
+        return birthdate;
+    }
+
+    public void setBirthdate(String birthdate) {
+        this.birthdate = birthdate;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
     public boolean isEighteenOrOlder() {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         try {

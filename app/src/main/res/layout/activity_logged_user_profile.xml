@@ -1,10 +1,164 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoggedUserProfileActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:background="@drawable/gradient_background">
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_margin="4dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="1dp"
+        app:cardMaxElevation="2dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center_vertical">
+            <ImageView
+                android:id="@+id/log_out"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/logout"
+                android:padding="8dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="User"
+                android:textStyle="bold"
+                android:layout_weight="1"
+                android:gravity="center" />
+            <ImageView
+                android:id="@+id/go_user"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/user"
+
+                android:padding="8dp" />
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="1dp"
+        android:layout_weight="1"
+        app:cardMaxElevation="2dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:orientation="vertical"
+            android:padding="8dp"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
+                <TextView
+                    android:id="@+id/message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:layout_gravity="center"
+                    android:textStyle="bold"
+                    />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:text="@string/new_submission"
+                    />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Type:"
+
+
+                        />
+
+                    <Spinner
+                        android:id="@+id/spinner_list"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:padding="4dp"
+
+                    >
+                    <TextView
+                        android:id="@+id/notifications"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/attach_documents"
+                        android:textSize="18sp"
+                        android:layout_weight="1"
+                        />
+
+
+                    <Button
+                        android:id="@+id/btn_pick_file"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pick_file" />
+
+
+                </LinearLayout>
+
+
+                <!-- TextView to display selected file paths -->
+                <TextView
+                    android:id="@+id/tv_selected_file_paths"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:layout_marginTop="8dp" />
+
+                <!-- Add submit button -->
+                <Button
+                    android:id="@+id/btn_submit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/submit"
+                    android:layout_gravity="center"
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/apps_linear"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="12dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:text="@string/submissions"
+                    />
+                <ListView
+                    android:id="@+id/submission_list_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+</LinearLayout>

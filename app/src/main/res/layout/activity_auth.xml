@@ -76,7 +76,6 @@
                         android:inputType="textEmailAddress" />
 
                 </com.google.android.material.textfield.TextInputLayout>
-
                 <LinearLayout
                     android:id="@+id/linear3"
                     android:layout_width="match_parent"
@@ -84,17 +83,7 @@
                     android:padding="18dp"
                     android:layout_marginTop="12dp"
                     android:orientation="horizontal">
-                    <Button
-                        android:id="@+id/signup"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="8dp"
-                        android:background="#F44336"
-                        android:text="@string/signup"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:textColor="#FFFFFF"
-                        android:layout_weight="1" />
+
                     <Button
                         android:id="@+id/login"
                         android:layout_width="wrap_content"

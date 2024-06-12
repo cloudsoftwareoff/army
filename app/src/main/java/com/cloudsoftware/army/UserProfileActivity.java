@@ -4,14 +4,18 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -20,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.cloudsoftware.army.adapters.SubmissionAdapter;
 import com.cloudsoftware.army.models.Citizen;
 import com.cloudsoftware.army.models.Submission;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -29,21 +34,19 @@ import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class UserProfileActivity extends AppCompatActivity {
 
-    private static final int PICK_DOCUMENT_REQUEST = 1;
-    private Spinner submissionTypeSpinner;
+
     private FirebaseFirestore db;
-    private TextView nameView, cinView, birthdateView, genderView, statusView, notificationsView, tvSelectedFilePaths;
-    private ProgressDialog progressDialog;
-    private final List<Uri> selectedFilePaths = new ArrayList<>();
-    private final List<String> selectedFilesNames = new ArrayList<>();
-    private final List<String> documents = new ArrayList<>();
+    private TextView nameView, cinView, birthdateView, genderView, statusView;
+
+
     private Citizen citizen;
-    private SubmissionAdapter submissionAdapter;
-    private List<Submission> submissions;
+
     LinearLayout new_submission,submissionList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,178 +55,137 @@ public class UserProfileActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
 
-        nameView = findViewById(R.id.name);
-        cinView = findViewById(R.id.cin);
-        birthdateView = findViewById(R.id.birthdate);
-        genderView = findViewById(R.id.gender);
-        statusView = findViewById(R.id.status);
-        notificationsView = findViewById(R.id.notifications);
-        Button btnPickFile = findViewById(R.id.btn_pick_file);
-        Button submit = findViewById(R.id.btn_submit);
-        new_submission=findViewById(R.id.new_app_linear);
-        submissionList=findViewById(R.id.apps_linear);
+        nameView = findViewById(R.id.name_value);
+        cinView = findViewById(R.id.cin_value);
+        birthdateView = findViewById(R.id.birthdate_value);
+        genderView = findViewById(R.id.gender_value);
+        statusView = findViewById(R.id.status_value);
+        Button create_account=findViewById(R.id.create_account);
+       // submissionList=findViewById(R.id.apps_linear);
         ImageView go_back=findViewById(R.id.go_back);
-        ListView listView=findViewById(R.id.submission_list_view);
-        tvSelectedFilePaths = findViewById(R.id.tv_selected_file_paths);
-        submissions = new ArrayList<>();
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Uploading files...");
-        progressDialog.setCancelable(false);
-
-        submissionTypeSpinner = findViewById(R.id.spinner_list);
-
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.submission_types, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        submissionAdapter = new SubmissionAdapter(this, submissions);
-        listView.setAdapter(submissionAdapter);
-        // Apply the adapter to the spinner
-        submissionTypeSpinner.setAdapter(adapter);
 
 
-        //pick date
-        btnPickFile.setOnClickListener(v -> pickDocument());
 
         citizen = getIntent().getParcelableExtra("CITIZEN");
         if (citizen != null) {
             displayUserData(citizen);
         }
-        loadSubmissions();
+
+
+        //create account
+        create_account.setOnClickListener(v -> {
+            // Create an AlertDialog Builder
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(R.string.enter_email_address);
+
+
+            final EditText input = new EditText(this);
+            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+            builder.setView(input);
+
+            builder.setPositiveButton(R.string.ok, (dialog, which) -> {
+                String email = input.getText().toString().trim();
+                ProgressDialog progressDialog = new ProgressDialog(this);
+                progressDialog.setMessage(getString(R.string.creating_account));
+                progressDialog.setCancelable(false);
+                progressDialog.show();
+
+
+                // Create Firebase account with the entered email
+                FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, citizen.getCin())
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                // Account creation successful
+                                progressDialog.dismiss();
+                                Toast.makeText(this, R.string.account_created_successfully, Toast.LENGTH_SHORT).show();
+                               citizen.setUid(FirebaseAuth.getInstance().getUid());
+                                Map<String, Object> data = new HashMap<>();
+                                data.put("uid", citizen.getUid());
+
+
+                                db.collection("citizens").document(citizen.getCin())
+                                        .set(data)
+                                        .addOnSuccessListener(aVoid -> {
+                                            AlertDialog.Builder xbuilder = new AlertDialog.Builder(this);
+                                            xbuilder.setTitle( R.string.account_created_successfully)
+                                                    .setMessage(getString(R.string.your_login_details_email) + email + "\n"+ R.string.password + citizen.getCin())
+                                                    .setPositiveButton("OK", (xdialog, xwhich) -> {
+
+                                                        xdialog.dismiss();
+                                                        Intent intent = new Intent(this, AuthActivity.class);
+                                                        startActivity(intent);
+                                                        finish();
+                                                    })
+                                                    .show();
+
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            Toast.makeText(this, R.string.error_setting_uid_for_citizen_with_cin, Toast.LENGTH_SHORT).show();
+
+
+                                        });
+
+                            } else {
+                                // Account creation failed
+                                progressDialog.dismiss();
+                                Toast.makeText(this, getString(R.string.account_creation_failed) + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+
+
+
+            });
+            builder.setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel());
+
+            // Show the dialog
+            builder.show();
+        });
+
+
+        // loadSubmissions();
 
 
         go_back.setOnClickListener(event->{
             finish();
         });
         // submit
-        submit.setOnClickListener(event -> {
-            if (!selectedFilePaths.isEmpty()) {
-                progressDialog.show();
-                uploadDocuments(selectedFilePaths, uriList -> {
-                    Calendar calendar = Calendar.getInstance();
-                    Date currentDate = calendar.getTime();
-                    Submission submission = new Submission(
-                            null,
-                            citizen.getCin(),
-                            uriList,
-                            currentDate,
-                            submissionTypeSpinner.getSelectedItem().toString(),
-                            "",
-                            "pending"
-                    );
-                    addSubmissionToFirestore(submission);
-                });
-            }
-        });
+
     }
 
-    private void uploadDocuments(List<Uri> files, OnDocumentsUploaded callback) {
-        if (files.isEmpty()) {
-            return;
-        }
 
-        List<String> uploadedDocumentUrls = new ArrayList<>();
-        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-        for (Uri filePath : files) {
-            StorageReference fileRef = storageRef.child("documents/" + citizen.getCin() + "/" + filePath.getLastPathSegment());
-
-            fileRef.putFile(filePath)
-                    .addOnSuccessListener(taskSnapshot -> {
-                        fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                            uploadedDocumentUrls.add(uri.toString());
-                            if (uploadedDocumentUrls.size() == files.size()) {
-                                progressDialog.dismiss();
-                                callback.onUploaded(uploadedDocumentUrls);
-                            }
-                        });
-                    })
-                    .addOnFailureListener(e -> {
-                        progressDialog.dismiss();
-                        showPopup("Error", "Failed to upload file: " + filePath.getLastPathSegment());
-                    });
-        }
-    }
-
-    private void addSubmissionToFirestore(Submission submission) {
-        // Create a new document reference
-        DocumentReference documentReference = db.collection("submissions").document();
-        String submissionId = documentReference.getId();
-        submission.setSubmissionId(submissionId);
-
-        // Add the submission to Firestore
-        documentReference
-                .set(submission)
-                .addOnSuccessListener(aVoid -> {
-                    showPopup("Success", "Submission added successfully.");
-                })
-                .addOnFailureListener(e -> {
-                    showPopup("Error", "Failed to add submission.");
-                });
-    }
-
-    private void loadSubmissions() {
-        db.collection("submissions")
-                .whereEqualTo("userId", citizen.getCin())
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        submissions.clear();
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            Submission submission = document.toObject(Submission.class);
-                            submissions.add(submission);
-                            if(submission.getStatus().equals("pending")){
-                           //     new_submission.setVisibility(View.GONE);
-                            }
-                        }
-                        if (submissions.isEmpty()) {
-                         //   submissionList.setVisibility(View.GONE);
-                        } else {
-                            submissionList.setVisibility(View.VISIBLE);
-                        }
-                        submissionAdapter.notifyDataSetChanged();
-                    } else {
-                       // submissionList.setVisibility(View.GONE);
-
-                    }
-                });
-    }
     private void displayUserData(Citizen citizen) {
-        nameView.setText("Name: " + citizen.getFirstName() + " " + citizen.getLastName());
-        cinView.setText("CIN: " + citizen.getCin());
-        birthdateView.setText("Birthdate: " + citizen.getBirthdate());
-        genderView.setText("Gender: " + citizen.getGender());
-        statusView.setText(citizen.getStatus());
-    }
-
-    private void showPopup(String title, String message) {
-        new AlertDialog.Builder(this)
-                .setTitle(title)
-                .setMessage(message)
-                .setPositiveButton(android.R.string.ok, null)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
-    }
-
-    private void pickDocument() {
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        intent.setType("*/*");
-        startActivityForResult(intent, PICK_DOCUMENT_REQUEST);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_DOCUMENT_REQUEST && resultCode == RESULT_OK && data != null) {
-            Uri uri = data.getData();
-            if (uri != null) {
-                selectedFilePaths.add(uri);
-                selectedFilesNames.add(uri.getLastPathSegment());
-                tvSelectedFilePaths.setText(String.join("\n", selectedFilesNames));
-            }
+        nameView.setText(  citizen.getFirstName() + " " + citizen.getLastName());
+        cinView.setText( citizen.getCin());
+        birthdateView.setText( citizen.getBirthdate());
+        genderView.setText(citizen.getGender());
+        String message="";
+        switch (citizen.getStatus()) {
+            case "Eligible":
+                message = getString(R.string.you_are_invited_to_join_the_army_training);
+                break;
+            case "Court":
+                message = getString(R.string.you_have_a_court_case_pending_please_resolve_this_before_joining);
+                break;
+            case "Warrant":
+                message = getString(R.string.there_is_a_warrant_out_for_your_arrest_please_resolve_this_issue);
+                break;
+            case "Exempt":
+                message = getString(R.string.you_are_exempt_from_joining_the_army_training);
+                break;
+            default:
+                message = getString(R.string.unknown_status_please_contact_support);
+                break;
         }
+
+        statusView.setText(message);
     }
 
-    private interface OnDocumentsUploaded {
-        void onUploaded(List<String> uriList);
-    }
+
+
+
+
+
+
+
 }

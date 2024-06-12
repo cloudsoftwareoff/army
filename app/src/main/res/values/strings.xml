@@ -14,12 +14,11 @@
 
 
     <string-array name="citizen_status">
-        <item>مؤهل</item>
-        <item>محكمة</item>
-        <item>مذكرة</item>
-        <item>معفي</item>
+        <item>Eligible</item>
+        <item>Court</item>
+        <item>Warrant</item>
+        <item>Exempt</item>
     </string-array>
-
 
 
     <!-- TODO: Remove or change this placeholder text -->
@@ -46,13 +45,38 @@
     <string name="pick_file">اختر ملف</string>
     <string name="attach_documents">إرفاق المستندات:</string>
     <string name="submit">إرسال</string>
-    <string name="submission">إرسال</string>
-    <string name="invalid_cin_number">Invalid cin number</string>
-    <string name="invalid_birthdate">Invalid birthdate</string>
-    <string name="the_birthdate_does_not_match_our_records">The birthdate does not match our records.</string>
-    <string name="no_citizen_found">No Citizen Found</string>
-    <string name="no_such_citizen_found">No such citizen found.</string>
-    <string name="email_field_required">Email field required</string>
-    <string name="password_required">Password required</string>
+    <string name="submissions">التقديمات</string>
+    <string name="invalid_cin_number">رقم الهوية غير صالح</string>
+    <string name="invalid_birthdate">تاريخ الميلاد غير صالح</string>
+    <string name="the_birthdate_does_not_match_our_records">تاريخ الميلاد لا يتطابق مع سجلاتنا.</string>
+    <string name="no_citizen_found">لم يتم العثور على مواطن</string>
+    <string name="no_such_citizen_found">لم يتم العثور على مواطن بهذا الوصف.</string>
+    <string name="email_field_required">حقل البريد الإلكتروني مطلوب</string>
+    <string name="password_required">كلمة المرور مطلوبة</string>
+    <string name="name">الاسم:</string>
+    <string name="birthdate">تاريخ الميلاد:</string>
+    <string name="gender">الجنس:</string>
+    <string name="status">الحالة:</string>
+    <string name="create_account">إنشاء حساب</string>
+    <string name="enter_email_address">أدخل عنوان البريد الإلكتروني</string>
+    <string name="ok">موافق</string>
+    <string name="cancel">إلغاء</string>
+    <string name="account_created_successfully">تم إنشاء الحساب بنجاح!</string>
+    <string name="account_creation_failed">فشل إنشاء الحساب:</string>
+    <string name="error_setting_uid_for_citizen_with_cin">خطأ في تعيين معرف للمواطن ذو رقم الهوية:</string>
+    <string name="uid_set_successfully_for_citizen_with_cin">تم تعيين معرف بنجاح للمواطن ذو رقم الهوية:</string>
+    <string name="your_login_details_email">تفاصيل تسجيل الدخول الخاصة بك:\nالبريد الإلكتروني:</string>
+    <string name="uploading_files">جارٍ تحميل الملفات...</string>
+    <string name="login_as_admin">تسجيل الدخول كمسؤول</string>
+    <string name="logout">تسجيل الخروج</string>
+    <string name="are_you_sure_you_want_to_logout">هل أنت متأكد أنك تريد تسجيل الخروج؟</string>
+    <string name="no_user_found">لم يتم العثور على مستخدم.</string>
+    <string name="sign_in_failed">فشل تسجيل الدخول:</string>
+    <string name="creating_account">جارٍ إنشاء الحساب...</string>
+    <string name="you_are_invited_to_join_the_army_training">أنت مدعو للانضمام إلى التدريب العسكري.</string>
+    <string name="you_have_a_court_case_pending_please_resolve_this_before_joining">لديك قضية في المحكمة قيد الانتظار. يرجى حل هذه المشكلة قبل الانضمام.</string>
+    <string name="there_is_a_warrant_out_for_your_arrest_please_resolve_this_issue">يوجد أمر اعتقال بحقك. يرجى حل هذه المشكلة.</string>
+    <string name="you_are_exempt_from_joining_the_army_training">أنت معفى من الانضمام إلى التدريب العسكري.</string>
+    <string name="unknown_status_please_contact_support">حالة غير معروفة. يرجى الاتصال بالدعم.</string>
 
 </resources>
