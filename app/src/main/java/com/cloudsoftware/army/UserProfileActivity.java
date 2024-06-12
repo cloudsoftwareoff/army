@@ -24,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.cloudsoftware.army.adapters.SubmissionAdapter;
 import com.cloudsoftware.army.models.Citizen;
 import com.cloudsoftware.army.models.Submission;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -44,7 +45,7 @@ public class UserProfileActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private TextView nameView, cinView, birthdateView, genderView, statusView;
 
-
+private Button create_account;
     private Citizen citizen;
 
     LinearLayout new_submission,submissionList;
@@ -60,7 +61,7 @@ public class UserProfileActivity extends AppCompatActivity {
         birthdateView = findViewById(R.id.birthdate_value);
         genderView = findViewById(R.id.gender_value);
         statusView = findViewById(R.id.status_value);
-        Button create_account=findViewById(R.id.create_account);
+         create_account=findViewById(R.id.create_account);
        // submissionList=findViewById(R.id.apps_linear);
         ImageView go_back=findViewById(R.id.go_back);
 
@@ -74,17 +75,21 @@ public class UserProfileActivity extends AppCompatActivity {
 
         //create account
         create_account.setOnClickListener(v -> {
-            // Create an AlertDialog Builder
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle(R.string.enter_email_address);
+            View dialogView = getLayoutInflater().inflate(R.layout.dialog_create_account, null);
+            builder.setView(dialogView);
 
+            TextInputLayout emailInputLayout = dialogView.findViewById(R.id.email_input_layout);
+            EditText emailInput = dialogView.findViewById(R.id.email_input);
 
-            final EditText input = new EditText(this);
-            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-            builder.setView(input);
 
             builder.setPositiveButton(R.string.ok, (dialog, which) -> {
-                String email = input.getText().toString().trim();
+                String email = emailInput.getText().toString().trim();
+                if(email.equals("") || !email.contains("@")){
+                    Toast.makeText(this, R.string.email_is_required, Toast.LENGTH_SHORT).show();
+
+                    return;
+                }
                 ProgressDialog progressDialog = new ProgressDialog(this);
                 progressDialog.setMessage(getString(R.string.creating_account));
                 progressDialog.setCancelable(false);
@@ -104,11 +109,11 @@ public class UserProfileActivity extends AppCompatActivity {
 
 
                                 db.collection("citizens").document(citizen.getCin())
-                                        .set(data)
+                                        .update(data)
                                         .addOnSuccessListener(aVoid -> {
                                             AlertDialog.Builder xbuilder = new AlertDialog.Builder(this);
                                             xbuilder.setTitle( R.string.account_created_successfully)
-                                                    .setMessage(getString(R.string.your_login_details_email) + email + "\n"+ R.string.password + citizen.getCin())
+                                                    .setMessage(getString(R.string.your_login_details_email) + email + R.string.password + citizen.getCin())
                                                     .setPositiveButton("OK", (xdialog, xwhich) -> {
 
                                                         xdialog.dismiss();
@@ -159,7 +164,10 @@ public class UserProfileActivity extends AppCompatActivity {
         cinView.setText( citizen.getCin());
         birthdateView.setText( citizen.getBirthdate());
         genderView.setText(citizen.getGender());
-        String message="";
+        if(!citizen.getUid().isEmpty() || !citizen.getUid().equals("")){
+            create_account.setVisibility(View.GONE);
+        }
+        String message;
         switch (citizen.getStatus()) {
             case "Eligible":
                 message = getString(R.string.you_are_invited_to_join_the_army_training);

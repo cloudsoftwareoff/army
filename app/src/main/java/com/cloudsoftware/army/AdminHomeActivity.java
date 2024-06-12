@@ -125,7 +125,7 @@ public class AdminHomeActivity extends AppCompatActivity {
 
     private void logout() {
         mAuth.signOut();
-        Intent intent = new Intent(this, AuthActivity.class);
+        Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
     }

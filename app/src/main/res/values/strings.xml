@@ -78,5 +78,11 @@
     <string name="there_is_a_warrant_out_for_your_arrest_please_resolve_this_issue">يوجد أمر اعتقال بحقك. يرجى حل هذه المشكلة.</string>
     <string name="you_are_exempt_from_joining_the_army_training">أنت معفى من الانضمام إلى التدريب العسكري.</string>
     <string name="unknown_status_please_contact_support">حالة غير معروفة. يرجى الاتصال بالدعم.</string>
+    <string name="email_is_required">البريد الإلكتروني مطلوب</string>
+    <string name="submission_added_successfully">تمت إضافة التقديم بنجاح.</string>
+    <string name="failed_to_add_submission">فشلت عملية إضافة التقديم.</string>
+    <string name="fetching_user_data">جار استرجاع بيانات المستخدم...</string>
+    <string name="no_user_found_with_the_provided_uid">لم يتم العثور على مستخدم باستخدام معرف المستخدم المقدم.</string>
+    <string name="please_pick_documents_first">يرجى اختيار المستندات أولاً</string>
 
 </resources>

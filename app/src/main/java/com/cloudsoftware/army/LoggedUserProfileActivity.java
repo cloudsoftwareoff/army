@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
@@ -39,12 +40,13 @@ public class LoggedUserProfileActivity extends AppCompatActivity {
     private Spinner submissionTypeSpinner;
     private FirebaseFirestore db;
     TextView tvSelectedFilePaths;
-    Citizen citizen=new Citizen();
+    Citizen citizen = new Citizen();
     ProgressDialog progressDialog;
     TextView messageText;
     private SubmissionAdapter submissionAdapter;
     private List<Submission> submissions;
     private FirebaseAuth mAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,7 +57,7 @@ public class LoggedUserProfileActivity extends AppCompatActivity {
         Button btnPickFile = findViewById(R.id.btn_pick_file);
         Button submit = findViewById(R.id.btn_submit);
         tvSelectedFilePaths = findViewById(R.id.tv_selected_file_paths);
-         progressDialog = new ProgressDialog(this);
+        progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.uploading_files));
         progressDialog.setCancelable(false);
         submissionTypeSpinner = findViewById(R.id.spinner_list);
@@ -64,13 +66,15 @@ public class LoggedUserProfileActivity extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         submissionTypeSpinner.setAdapter(adapter);
         btnPickFile.setOnClickListener(v -> pickDocument());
-        ListView listView=findViewById(R.id.submission_list_view);
-        ImageView log_out=findViewById(R.id.log_out);
+        ListView listView = findViewById(R.id.submission_list_view);
+        ImageView log_out = findViewById(R.id.log_out);
         mAuth = FirebaseAuth.getInstance();
         submissions = new ArrayList<>();
         submissionAdapter = new SubmissionAdapter(this, submissions);
         listView.setAdapter(submissionAdapter);
-         messageText=findViewById(R.id.message);
+        messageText = findViewById(R.id.message);
+
+        fetchUserData(FirebaseAuth.getInstance().getUid());
         loadSubmissions();
         submit.setOnClickListener(event -> {
             if (!selectedFilePaths.isEmpty()) {
@@ -85,16 +89,16 @@ public class LoggedUserProfileActivity extends AppCompatActivity {
                             currentDate,
                             submissionTypeSpinner.getSelectedItem().toString(),
                             "",
-                            "pending"
-                    );
+                            "pending");
                     addSubmissionToFirestore(submission);
                 });
+            } else {
+                Toast.makeText(this, getString(R.string.please_pick_documents_first), Toast.LENGTH_SHORT).show();
+
             }
         });
 
-
-
-        log_out.setOnClickListener(event->{
+        log_out.setOnClickListener(event -> {
             showLogoutDialog();
         });
 
@@ -111,7 +115,7 @@ public class LoggedUserProfileActivity extends AppCompatActivity {
 
     private void logout() {
         mAuth.signOut();
-        Intent intent = new Intent(this, AuthActivity.class);
+        Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
     }
@@ -126,14 +130,14 @@ public class LoggedUserProfileActivity extends AppCompatActivity {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Submission submission = document.toObject(Submission.class);
                             submissions.add(submission);
-                            if(submission.getStatus().equals("pending")){
-                                //     new_submission.setVisibility(View.GONE);
+                            if (submission.getStatus().equals("pending")) {
+                                // new_submission.setVisibility(View.GONE);
                             }
                         }
                         if (submissions.isEmpty()) {
-                            //   submissionList.setVisibility(View.GONE);
+                            // submissionList.setVisibility(View.GONE);
                         } else {
-                          //  submissionList.setVisibility(View.VISIBLE);
+                            // submissionList.setVisibility(View.VISIBLE);
                         }
                         submissionAdapter.notifyDataSetChanged();
                     } else {
@@ -142,6 +146,7 @@ public class LoggedUserProfileActivity extends AppCompatActivity {
                     }
                 });
     }
+
     private void uploadDocuments(List<Uri> files, OnDocumentsUploaded callback) {
         if (files.isEmpty()) {
             return;
@@ -150,7 +155,8 @@ public class LoggedUserProfileActivity extends AppCompatActivity {
         List<String> uploadedDocumentUrls = new ArrayList<>();
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
         for (Uri filePath : files) {
-            StorageReference fileRef = storageRef.child("documents/" + citizen.getCin() + "/" + filePath.getLastPathSegment());
+            StorageReference fileRef = storageRef
+                    .child("documents/" + citizen.getCin() + "/" + filePath.getLastPathSegment());
 
             fileRef.putFile(filePath)
                     .addOnSuccessListener(taskSnapshot -> {
@@ -179,12 +185,14 @@ public class LoggedUserProfileActivity extends AppCompatActivity {
         documentReference
                 .set(submission)
                 .addOnSuccessListener(aVoid -> {
-                    showPopup("Success", "Submission added successfully.");
+                    loadSubmissions();
+                    showPopup("Success", getString(R.string.submission_added_successfully));
                 })
                 .addOnFailureListener(e -> {
-                    showPopup("Error", "Failed to add submission.");
+                    showPopup("Error", getString(R.string.failed_to_add_submission));
                 });
     }
+
     private void showPopup(String title, String message) {
         new AlertDialog.Builder(this)
                 .setTitle(title)
@@ -193,8 +201,9 @@ public class LoggedUserProfileActivity extends AppCompatActivity {
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
     }
+
     private void fetchUserData(String uid) {
-        ProgressDialog progressDialog = ProgressDialog.show(this, "", "Fetching user data...", true);
+        ProgressDialog progressDialog = ProgressDialog.show(this, "", getString(R.string.fetching_user_data), true);
 
         // Query the "citizens" collection to find the document with the matching UID
         db.collection("citizens").whereEqualTo("uid", uid).get().addOnCompleteListener(task -> {
@@ -203,21 +212,23 @@ public class LoggedUserProfileActivity extends AppCompatActivity {
 
             if (task.isSuccessful()) {
                 if (!task.getResult().isEmpty()) {
-
                     DocumentSnapshot document = task.getResult().getDocuments().get(0);
-                     citizen = document.toObject(Citizen.class);
+                    citizen = document.toObject(Citizen.class);
+                    System.out.println(citizen);
                     if (citizen != null) {
-
-                        String message="";
+                        loadSubmissions();
+                        String message = "";
                         switch (citizen.getStatus()) {
                             case "Eligible":
                                 message = getString(R.string.you_are_invited_to_join_the_army_training);
                                 break;
                             case "Court":
-                                message = getString(R.string.you_have_a_court_case_pending_please_resolve_this_before_joining);
+                                message = getString(
+                                        R.string.you_have_a_court_case_pending_please_resolve_this_before_joining);
                                 break;
                             case "Warrant":
-                                message = getString(R.string.there_is_a_warrant_out_for_your_arrest_please_resolve_this_issue);
+                                message = getString(
+                                        R.string.there_is_a_warrant_out_for_your_arrest_please_resolve_this_issue);
                                 break;
                             case "Exempt":
                                 message = getString(R.string.you_are_exempt_from_joining_the_army_training);
@@ -228,11 +239,10 @@ public class LoggedUserProfileActivity extends AppCompatActivity {
                         }
                         messageText.setText(message);
 
-
                     }
                 } else {
 
-                    showPopup("Error", "No user found with the provided UID.");
+                    showPopup("Error", getString(R.string.no_user_found_with_the_provided_uid));
                 }
             } else {
                 // Query failed
@@ -244,11 +254,13 @@ public class LoggedUserProfileActivity extends AppCompatActivity {
             showPopup("Error", "Error fetching data: " + e.getMessage());
         });
     }
+
     private void pickDocument() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("*/*");
         startActivityForResult(intent, PICK_DOCUMENT_REQUEST);
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
