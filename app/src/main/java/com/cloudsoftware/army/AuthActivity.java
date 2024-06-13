@@ -49,23 +49,6 @@ private FirebaseFirestore db;
             }
             performLogin(emailEdit.getText().toString(),passwordEdit.getText().toString());
         });
-        //Create account
-        /*
-        signup_btn.setOnClickListener(event->{
-            if(emailEdit.getText().equals("") || !emailEdit.getText().toString().contains("@")){
-                emailEdit.setError(getString(R.string.email_field_required));
-                return;
-
-            }
-            if(passwordEdit.getText().toString().equals("")){
-                passwordEdit.setError("Password required");
-                return;
-            }
-
-            performSignup(emailEdit.getText().toString(),passwordEdit.getText().toString());
-
-        });
-        */
 
     }
     private void performLogin(String email, String password) {
@@ -93,6 +76,7 @@ private FirebaseFirestore db;
                                 Intent intent = new Intent(AuthActivity.this, AdminHomeActivity.class);
                                 startActivity(intent);
                                 finish();
+
                             } else {
                                 // No document found, assume the user is a citizen
                                 editor.putString("user", "citizen");
@@ -133,43 +117,7 @@ private FirebaseFirestore db;
             }
         }).addOnFailureListener(this, task -> {
             progressDialog.dismiss();
-            Toast.makeText(AuthActivity.this, getString(R.string.sign_in_failed)  + task.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(AuthActivity.this, getString(R.string.sign_in_failed) + task.getMessage(), Toast.LENGTH_SHORT).show();
         });
-    }
-
-    private void performSignup(String email, String password) {
-        ProgressDialog progressDialog = ProgressDialog.show(AuthActivity.this, "", "Signing in...", true);
-
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()) {
-                        progressDialog.dismiss();
-
-                        FirebaseUser firebaseUser = mAuth.getCurrentUser();
-                        String userId = firebaseUser.getUid();
-                        UserClass user = new UserClass(email, password, email.substring(0,email.indexOf("@")), userId);
-                        // Save user to Firestore
-                        db.collection("users").document(userId).set(user)
-                                .addOnCompleteListener(this, dbTask -> {
-                                    if (dbTask.isSuccessful()) {
-                                        Intent intent = new Intent(AuthActivity.this, AdminHomeActivity.class);
-                                        startActivity(intent);
-                                        finish();
-                                    } else {
-                                        Toast.makeText(AuthActivity.this, "Failed to save user data: " + dbTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-
-
-                    } else {
-
-                        Toast.makeText(AuthActivity.this, "Signup failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(this,task->{
-                    Toast.makeText(AuthActivity.this, task.toString(),
-                            Toast.LENGTH_SHORT).show();
-                })
-        ;
     }
 }

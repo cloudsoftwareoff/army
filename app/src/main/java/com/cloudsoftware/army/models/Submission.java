@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import java.util.Date;
 import java.util.List;
 
-public class Submission implements  Parcelable{
+public class Submission implements Parcelable {
     private String submissionId;
     private String userId;
     private List<String> documentUrls;
@@ -14,11 +14,13 @@ public class Submission implements  Parcelable{
     private String submissionType;
     private String note;
     private String status;
+    private String roundId; // New field
 
     // Required default constructor for Firestore serialization/deserialization
     public Submission() {}
 
-    public Submission(String submissionId, String userId, List<String> documentUrls, Date submissionDate, String submissionType, String note, String status) {
+    public Submission(String submissionId, String userId, List<String> documentUrls, Date submissionDate,
+                      String submissionType, String note, String status, String roundId) {
         this.submissionId = submissionId;
         this.userId = userId;
         this.documentUrls = documentUrls;
@@ -26,7 +28,9 @@ public class Submission implements  Parcelable{
         this.submissionType = submissionType;
         this.note = note;
         this.status = status;
+        this.roundId = roundId;
     }
+
     protected Submission(Parcel in) {
         submissionId = in.readString();
         userId = in.readString();
@@ -35,6 +39,7 @@ public class Submission implements  Parcelable{
         note = in.readString();
         status = in.readString();
         submissionDate = new Date(in.readLong());
+        roundId = in.readString(); // Read roundId from Parcel
     }
 
     public static final Parcelable.Creator<Submission> CREATOR = new Parcelable.Creator<Submission>() {
@@ -63,6 +68,7 @@ public class Submission implements  Parcelable{
         dest.writeString(note);
         dest.writeString(status);
         dest.writeLong(submissionDate.getTime());
+        dest.writeString(roundId); // Write roundId to Parcel
     }
 
     public String getSubmissionId() {
@@ -119,5 +125,13 @@ public class Submission implements  Parcelable{
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getRoundId() {
+        return roundId;
+    }
+
+    public void setRoundId(String roundId) {
+        this.roundId = roundId;
     }
 }

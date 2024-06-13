@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,11 +45,15 @@ public class SubmissionDetailActivity extends AppCompatActivity {
         userStatusSpinner = findViewById(R.id.citizen_status_spinner);
         saveStatusButton = findViewById(R.id.save_status_button);
         noteEdit = findViewById(R.id.noteEdit);
-
+        ImageView go_back=findViewById(R.id.go_back);
         submission = getIntent().getParcelableExtra("SUBMISSION");
         if (submission != null) {
             displaySubmissionDetails(submission);
         }
+
+        go_back.setOnClickListener(v->{
+            finish();
+        });
 
         // citizen status adapter
         ArrayAdapter<CharSequence> citizen_status_adapter = ArrayAdapter.createFromResource(this,
@@ -94,7 +99,7 @@ public class SubmissionDetailActivity extends AppCompatActivity {
         // Save the new status to Firestore
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("citizens").document(submission.getUserId())
-                        .update("status",statusSpinner.getSelectedItem().toString())
+                        .update("status",userStatusSpinner.getSelectedItem().toString())
                                 .addOnSuccessListener(aVoid->{
                                     //success
                                 })

@@ -1,6 +1,7 @@
-package com.cloudsoftware.army;
+package com.cloudsoftware.army.db;
 
 import com.cloudsoftware.army.models.Citizen;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -22,6 +23,39 @@ public class CitizenRepository {
     public interface StatusUpdateCallback {
         void onStatusUpdateComplete();
         void onStatusUpdateFailed();
+    }
+
+    public void updateCitizenStatus(String userId, String newStatus, Runnable onSuccess, Runnable onFailure) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("status", newStatus);
+
+        db.collection("citizens").document(userId)
+                .update(data)
+                .addOnSuccessListener(aVoid -> onSuccess.run())
+                .addOnFailureListener(e -> onFailure.run());
+    }
+
+    public void fetchCitizenByUid(String uid, Consumer<Citizen> onSuccess, Runnable onFailure) {
+        db.collection("citizens")
+                .whereEqualTo("uid", uid)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+
+                        for (DocumentSnapshot document : task.getResult()) {
+                            Citizen citizen = document.toObject(Citizen.class);
+                            if (citizen != null) {
+                                onSuccess.accept(citizen);
+                                return;
+                            }
+                        }
+                        // If no citizen found
+                        onFailure.run();
+                    } else {
+                        onFailure.run();
+                    }
+                })
+                .addOnFailureListener(e -> onFailure.run());
     }
     public void fetchCitizensByStatuses(List<String> statuses, Consumer<List<Citizen>> onSuccess, Runnable onFailure) {
         db.collection("citizens")

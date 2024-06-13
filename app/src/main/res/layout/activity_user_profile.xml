@@ -173,7 +173,25 @@
             android:orientation="vertical"
             android:gravity="right"
             android:padding="12dp">
+            <TextView
 
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/round_name"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_marginBottom="8dp"/>
+            <TextView
+                android:id="@+id/round_name"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="round_name"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_marginBottom="8dp"/>
             <Button
                 android:id="@+id/create_account"
                 android:layout_width="match_parent"

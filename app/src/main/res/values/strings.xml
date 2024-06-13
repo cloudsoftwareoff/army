@@ -84,5 +84,22 @@
     <string name="fetching_user_data">جار استرجاع بيانات المستخدم...</string>
     <string name="no_user_found_with_the_provided_uid">لم يتم العثور على مستخدم باستخدام معرف المستخدم المقدم.</string>
     <string name="please_pick_documents_first">يرجى اختيار المستندات أولاً</string>
+    <string name="start_date">تاريخ البدء: %s</string>
+    <string name="end_date">%s : تاريخ الانتهاء</string>
+    <string name="location">%s : الموقع</string>
+    <string name="round_name">اسم الدورة</string>
+    <string name="add_round">إضافة الدورة</string>
+    <string name="fill_all_fields">يرجى ملء جميع الحقول</string>
+    <string name="round_added_successfully">تمت إضافة الدورة بنجاح</string>
+    <string name="failed_to_add_round">فشلت إضافة الدورة</string>
+    <string name="manager">مدير</string>
+    <string name="eligible">مؤهل</string>
+    <string name="penalis">معاقب</string>
+    <string name="exempt">معفى</string>
+    <string name="loading">جارٍ التحميل...</string>
+    <string name="recruiting_round_alert">تنبيه جولة التجنيد</string>
+    <string name="there_s_recruiting_round_that_has_not_ended_yet">هناك جولة تجنيد لم تنتهِ بعد!</string>
+    <string name="no_active_recruiting_round_at_the_moment">لا توجد جولة تجنيد نشطة في الوقت الحالي.</string>
+
 
 </resources>

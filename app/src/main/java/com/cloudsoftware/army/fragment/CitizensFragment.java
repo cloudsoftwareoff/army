@@ -1,26 +1,29 @@
 package com.cloudsoftware.army.fragment;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.cloudsoftware.army.CitizenRepository;
 import com.cloudsoftware.army.R;
 import com.cloudsoftware.army.adapters.CitizenAdapter;
+import com.cloudsoftware.army.adapters.OnCitizenLongClickListener;
+import com.cloudsoftware.army.db.CitizenRepository;
 import com.cloudsoftware.army.models.Citizen;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CitizensFragment extends Fragment {
+public class CitizensFragment extends Fragment implements OnCitizenLongClickListener {
 
     private static final String ARG_STATUS = "status";
     private CitizenAdapter adapter;
@@ -43,9 +46,8 @@ public class CitizensFragment extends Fragment {
         ListView listView = view.findViewById(R.id.citizen_list_view);
         progressBar = view.findViewById(R.id.progress_bar);
         citizens = new ArrayList<>();
-        adapter = new CitizenAdapter(getContext(), citizens);
+        adapter = new CitizenAdapter(getContext(), citizens, this);
         listView.setAdapter(adapter);
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         if (getArguments() != null) {
             status = getArguments().getString(ARG_STATUS);
@@ -82,5 +84,34 @@ public class CitizensFragment extends Fragment {
                 progressBar.setVisibility(View.GONE);
             });
         }
+    }
+
+    @Override
+    public void onCitizenLongClick(Citizen citizen) {
+        showChangeStatusDialog(citizen);
+    }
+
+    public void showChangeStatusDialog(Citizen citizen) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Change Status");
+
+        String[] statuses = {"Eligible", "Court", "Warrant", "Exempt"};
+
+        builder.setItems(statuses, (dialog, which) -> {
+            String selectedStatus = statuses[which];
+            progressBar.setVisibility(View.VISIBLE);
+
+            CitizenRepository citizenRepository = new CitizenRepository();
+            citizenRepository.updateCitizenStatus(citizen.getCin(), selectedStatus, () -> {
+                Toast.makeText(getContext(), "Status updated successfully", Toast.LENGTH_SHORT).show();
+                loadCitizens();
+            }, () -> {
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(getContext(), "Failed to update status", Toast.LENGTH_SHORT).show();
+            });
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+        builder.show();
     }
 }

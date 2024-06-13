@@ -1,4 +1,3 @@
-
 package com.cloudsoftware.army.adapters;
 
 import android.content.Context;
@@ -23,11 +22,13 @@ public class CitizenAdapter extends BaseAdapter {
     private Context context;
     private List<Citizen> citizens;
     private LayoutInflater inflater;
+    private OnCitizenLongClickListener longClickListener;
 
-    public CitizenAdapter(Context context, List<Citizen> citizens) {
+    public CitizenAdapter(Context context, List<Citizen> citizens, OnCitizenLongClickListener longClickListener) {
         this.context = context;
         this.citizens = citizens;
         this.inflater = LayoutInflater.from(context);
+        this.longClickListener = longClickListener;
     }
 
     @Override
@@ -82,6 +83,13 @@ public class CitizenAdapter extends BaseAdapter {
             context.startActivity(intent);
         });
 
+        convertView.setOnLongClickListener(v -> {
+            if (longClickListener != null) {
+                longClickListener.onCitizenLongClick(citizen);
+            }
+            return true;
+        });
+
         return convertView;
     }
 
@@ -92,3 +100,4 @@ public class CitizenAdapter extends BaseAdapter {
         TextView user_age;
     }
 }
+

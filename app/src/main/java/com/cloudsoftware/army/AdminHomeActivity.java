@@ -6,39 +6,24 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
-import androidx.viewpager2.widget.ViewPager2;
 
-import com.cloudsoftware.army.adapters.CitizenAdapter;
-import com.cloudsoftware.army.fragment.CitizensFragment;
-import com.cloudsoftware.army.models.Citizen;
-import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
+import com.cloudsoftware.army.db.RecruitingManager;
+import com.cloudsoftware.army.fragment.RoundListFragment;
+import com.cloudsoftware.army.models.ArmyRecruitingRound;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class AdminHomeActivity extends AppCompatActivity {
-    private FirebaseFirestore db;
-    private ListView listView;
-    private CitizenAdapter adapter;
-    private List<Citizen> citizens;
+
     private FirebaseAuth mAuth;
-    private CitizenRepository citizenRepository;
-    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,61 +31,37 @@ public class AdminHomeActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_admin_home);
 
-        listView = findViewById(R.id.citizen);
-       // citizens = new ArrayList<>();
-        //adapter = new CitizenAdapter(this, citizens);
-
-        mAuth = FirebaseAuth.getInstance();
-        citizenRepository = new CitizenRepository();
-        ViewPager2 viewPager = findViewById(R.id.view_pager);
-        TabLayout tabLayout = findViewById(R.id.tab_layout);
-
-        viewPager.setAdapter(new FragmentStateAdapter(this) {
-            @NonNull
-            @Override
-            public Fragment createFragment(int position) {
-                switch (position) {
-                    case 1:
-                        return CitizensFragment.newInstance("Penalisé");
-                    case 2:
-                        return CitizensFragment.newInstance("Exempt");
-                    default:
-                        return CitizensFragment.newInstance("Eligible");
-                }
-            }
-
-            @Override
-            public int getItemCount() {
-                return 3;
-            }
-        });
-
-        new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
-            switch (position) {
-                case 0:
-                    tab.setText("Eligible");
-                    break;
-                case 1:
-                    tab.setText("Penalisé");
-                    break;
-                case 2:
-                    tab.setText("Exempt");
-                    break;
-            }
-        }).attach();
 
         DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
         LinearLayout drawer = findViewById(R.id._nav_view);
         LinearLayout log_out = drawer.findViewById(R.id.logout);
+        LinearLayout view_citizen=findViewById(R.id.manage_citizen);
+        TextView user_email=findViewById(R.id.user_email);
         ImageView menu = findViewById(R.id.menu);
-        db = FirebaseFirestore.getInstance();
-        Button start_recruiting = findViewById(R.id.start);
-
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Loading...");
+        ImageView view_requests = findViewById(R.id.requests);
+        Button add_round=findViewById(R.id.add_round);
+        AtomicReference<Boolean> canAdd= new AtomicReference<>(false);
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new RoundListFragment())
+                    .commit();
+        }
+        mAuth = FirebaseAuth.getInstance();
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage(getString(R.string.loading));
         progressDialog.setCancelable(false);
-
-        //loadCitizens();
+        RecruitingManager recruitingManager=new RecruitingManager();
+        recruitingManager.getAllRounds((isSuccess, rounds) ->{
+            if(isSuccess){
+                for (ArmyRecruitingRound round:rounds){
+                    if(!round.hasNotEnded()){
+                        canAdd.set(true);
+                        break;
+                    }
+                }
+            }
+        });
+        user_email.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
 
         // Drawer
         menu.setOnClickListener(event -> drawerLayout.openDrawer(GravityCompat.START));
@@ -108,8 +69,20 @@ public class AdminHomeActivity extends AppCompatActivity {
         // Logout
         log_out.setOnClickListener(v -> showLogoutDialog());
 
-        start_recruiting.setOnClickListener(event -> {
+        view_requests.setOnClickListener(event -> {
             Intent intent = new Intent(this, SubmissionListActivity.class);
+            startActivity(intent);
+        });
+        view_citizen.setOnClickListener(event -> {
+            Intent intent = new Intent(this, CitizenListActivity.class);
+            startActivity(intent);
+        });
+        add_round.setOnClickListener(event -> {
+            if(!canAdd.get()){
+                showPopup(getString(R.string.there_s_recruiting_round_that_has_not_ended_yet));
+                return;
+            }
+            Intent intent = new Intent(this, AddRoundActivity.class);
             startActivity(intent);
         });
     }
@@ -129,32 +102,11 @@ public class AdminHomeActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
-
-    public void loadCitizens() {
-        progressDialog.show();
-        CollectionReference citizensRef = db.collection("citizens");
-        citizensRef.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                citizens.clear();
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                    Citizen citizen = document.toObject(Citizen.class);
-                    if (citizen.isEighteenOrOlder()) {
-                        citizens.add(citizen);
-                    }
-                }
-                adapter.notifyDataSetChanged();
-            } else {
-                // Handle error
-            }
-            progressDialog.dismiss();
-        });
-    }
-
-    private void showPopup(String title, String message) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(title);
-        builder.setMessage(message);
-        builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
-        builder.show();
+    private void showPopup(String message) {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.recruiting_round_alert)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok, null)
+                .show();
     }
 }

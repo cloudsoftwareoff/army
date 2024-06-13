@@ -33,16 +33,17 @@ public class MainActivity extends AppCompatActivity {
         if (currentUser != null) {
             SharedPreferences sharedPreferences = getSharedPreferences("my_prefs", Context.MODE_PRIVATE);
 
-            String userType = sharedPreferences.getString("user", "user");
+            String userType = sharedPreferences.getString("user", "citizen");
+            Intent intent;
             if(userType.equals("admin")) {
-                Intent intent = new Intent(MainActivity.this, AdminHomeActivity.class);
+                intent = new Intent(MainActivity.this, AdminHomeActivity.class);
 
-                startActivity(intent);
-                finish();
+            }else{
+                intent = new Intent(MainActivity.this, LoggedUserProfileActivity.class);
             }
-            Intent intent = new Intent(MainActivity.this, LoggedUserProfileActivity.class);
             startActivity(intent);
             finish();
+
         }
 
         start.setOnClickListener(event->{

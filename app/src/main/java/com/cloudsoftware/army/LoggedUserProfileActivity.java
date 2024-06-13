@@ -18,6 +18,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.cloudsoftware.army.adapters.SubmissionAdapter;
+import com.cloudsoftware.army.db.CitizenRepository;
+import com.cloudsoftware.army.db.RecruitingManager;
+import com.cloudsoftware.army.models.ArmyRecruitingRound;
 import com.cloudsoftware.army.models.Citizen;
 import com.cloudsoftware.army.models.Submission;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,6 +35,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class LoggedUserProfileActivity extends AppCompatActivity {
     private final List<Uri> selectedFilePaths = new ArrayList<>();
@@ -39,14 +44,14 @@ public class LoggedUserProfileActivity extends AppCompatActivity {
     private static final int PICK_DOCUMENT_REQUEST = 1;
     private Spinner submissionTypeSpinner;
     private FirebaseFirestore db;
-    TextView tvSelectedFilePaths;
+    TextView tvSelectedFilePaths,title;
     Citizen citizen = new Citizen();
     ProgressDialog progressDialog;
     TextView messageText;
     private SubmissionAdapter submissionAdapter;
     private List<Submission> submissions;
     private FirebaseAuth mAuth;
-
+    RecruitingManager recruitingManager=new RecruitingManager();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +62,7 @@ public class LoggedUserProfileActivity extends AppCompatActivity {
         Button btnPickFile = findViewById(R.id.btn_pick_file);
         Button submit = findViewById(R.id.btn_submit);
         tvSelectedFilePaths = findViewById(R.id.tv_selected_file_paths);
+        title=findViewById(R.id.title);
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.uploading_files));
         progressDialog.setCancelable(false);
@@ -73,24 +79,59 @@ public class LoggedUserProfileActivity extends AppCompatActivity {
         submissionAdapter = new SubmissionAdapter(this, submissions);
         listView.setAdapter(submissionAdapter);
         messageText = findViewById(R.id.message);
+        TextView roundName=findViewById(R.id.round_name);
+        CitizenRepository citizenRepo = new CitizenRepository();
 
-        fetchUserData(FirebaseAuth.getInstance().getUid());
-        loadSubmissions();
+        citizenRepo.fetchCitizenByUid(FirebaseAuth.getInstance().getUid(),
+                citizen -> {
+                    ProgressDialog progressDialog = ProgressDialog.show(this, "", getString(R.string.fetching_user_data), true);
+
+                    this.citizen=citizen;
+                    loadSubmissions();
+
+                    recruitingManager.getCurrentRound((onSuccess,round)->{
+                        if(onSuccess && round!=null){
+                            if(round.getCandidatesId().contains(citizen.getCin())){
+                                roundName.setText(round.getRoundName());
+                                btnPickFile.setEnabled(true);
+                                submit.setEnabled(true);
+                            }
+                        }
+                    });
+                    setUserStatusText(citizen);
+                    progressDialog.dismiss();
+                },
+                () -> {
+                    showPopup("Error", getString(R.string.no_user_found_with_the_provided_uid));
+                });
+
+        roundName.setText(getString(R.string.no_active_recruiting_round_at_the_moment));
+        btnPickFile.setEnabled(false);
+        submit.setEnabled(false);
+
         submit.setOnClickListener(event -> {
             if (!selectedFilePaths.isEmpty()) {
                 progressDialog.show();
                 uploadDocuments(selectedFilePaths, uriList -> {
                     Calendar calendar = Calendar.getInstance();
                     Date currentDate = calendar.getTime();
-                    Submission submission = new Submission(
-                            null,
-                            citizen.getCin(),
-                            uriList,
-                            currentDate,
-                            submissionTypeSpinner.getSelectedItem().toString(),
-                            "",
-                            "pending");
-                    addSubmissionToFirestore(submission);
+                    recruitingManager.getCurrentRound((onSuccess,round)->{
+                        if(onSuccess && round!=null){
+                            if(round.getCandidatesId().contains(citizen.getCin())){
+                                Submission submission = new Submission(
+                                        null,
+                                        citizen.getCin(),
+                                        uriList,
+                                        currentDate,
+                                        submissionTypeSpinner.getSelectedItem().toString(),
+                                        "",
+                                        "pending",
+                                        round.getId());
+                                addSubmissionToFirestore(submission);
+                            }
+                        }
+                    });
+
                 });
             } else {
                 Toast.makeText(this, getString(R.string.please_pick_documents_first), Toast.LENGTH_SHORT).show();
@@ -198,61 +239,33 @@ public class LoggedUserProfileActivity extends AppCompatActivity {
                 .setTitle(title)
                 .setMessage(message)
                 .setPositiveButton(android.R.string.ok, null)
-                .setIcon(android.R.drawable.ic_dialog_alert)
+               // .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
     }
 
-    private void fetchUserData(String uid) {
-        ProgressDialog progressDialog = ProgressDialog.show(this, "", getString(R.string.fetching_user_data), true);
-
-        // Query the "citizens" collection to find the document with the matching UID
-        db.collection("citizens").whereEqualTo("uid", uid).get().addOnCompleteListener(task -> {
-            // Dismiss the progress dialog once the task is complete
-            progressDialog.dismiss();
-
-            if (task.isSuccessful()) {
-                if (!task.getResult().isEmpty()) {
-                    DocumentSnapshot document = task.getResult().getDocuments().get(0);
-                    citizen = document.toObject(Citizen.class);
-                    System.out.println(citizen);
-                    if (citizen != null) {
-                        loadSubmissions();
-                        String message = "";
-                        switch (citizen.getStatus()) {
-                            case "Eligible":
-                                message = getString(R.string.you_are_invited_to_join_the_army_training);
-                                break;
-                            case "Court":
-                                message = getString(
-                                        R.string.you_have_a_court_case_pending_please_resolve_this_before_joining);
-                                break;
-                            case "Warrant":
-                                message = getString(
-                                        R.string.there_is_a_warrant_out_for_your_arrest_please_resolve_this_issue);
-                                break;
-                            case "Exempt":
-                                message = getString(R.string.you_are_exempt_from_joining_the_army_training);
-                                break;
-                            default:
-                                message = getString(R.string.unknown_status_please_contact_support);
-                                break;
-                        }
-                        messageText.setText(message);
-
-                    }
-                } else {
-
-                    showPopup("Error", getString(R.string.no_user_found_with_the_provided_uid));
-                }
-            } else {
-                // Query failed
-                showPopup("Error", "Error fetching data.");
-            }
-        }).addOnFailureListener(e -> {
-            // Handle any errors
-            progressDialog.dismiss();
-            showPopup("Error", "Error fetching data: " + e.getMessage());
-        });
+    private void setUserStatusText(Citizen citizen) {
+    title.setText(citizen.getFirstName());
+        String message;
+        switch (citizen.getStatus()) {
+            case "Eligible":
+                message = getString(R.string.you_are_invited_to_join_the_army_training);
+                break;
+            case "Court":
+                message = getString(
+                        R.string.you_have_a_court_case_pending_please_resolve_this_before_joining);
+                break;
+            case "Warrant":
+                message = getString(
+                        R.string.there_is_a_warrant_out_for_your_arrest_please_resolve_this_issue);
+                break;
+            case "Exempt":
+                message = getString(R.string.you_are_exempt_from_joining_the_army_training);
+                break;
+            default:
+                message = getString(R.string.unknown_status_please_contact_support);
+                break;
+        }
+        messageText.setText(message);
     }
 
     private void pickDocument() {
