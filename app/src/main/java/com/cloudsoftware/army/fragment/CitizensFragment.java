@@ -17,6 +17,7 @@ import com.cloudsoftware.army.R;
 import com.cloudsoftware.army.adapters.CitizenAdapter;
 import com.cloudsoftware.army.adapters.OnCitizenLongClickListener;
 import com.cloudsoftware.army.db.CitizenRepository;
+import com.cloudsoftware.army.models.ArmyRecruitingRound;
 import com.cloudsoftware.army.models.Citizen;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -93,25 +94,26 @@ public class CitizensFragment extends Fragment implements OnCitizenLongClickList
 
     public void showChangeStatusDialog(Citizen citizen) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Change Status");
+        builder.setTitle(getString( R.string.change_status));
 
         String[] statuses = {"Eligible", "Court", "Warrant", "Exempt"};
-
-        builder.setItems(statuses, (dialog, which) -> {
+        String[] statusesARABIC = {getString(R.string.eligible), getString(R.string.court), getString(R.string.warrant)
+                , getString(R.string.exempt)};
+        builder.setItems(statusesARABIC, (dialog, which) -> {
             String selectedStatus = statuses[which];
             progressBar.setVisibility(View.VISIBLE);
 
             CitizenRepository citizenRepository = new CitizenRepository();
             citizenRepository.updateCitizenStatus(citizen.getCin(), selectedStatus, () -> {
-                Toast.makeText(getContext(), "Status updated successfully", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(),getString( R.string.status_updated_successfully), Toast.LENGTH_SHORT).show();
                 loadCitizens();
             }, () -> {
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(getContext(), "Failed to update status", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(),getString( R.string.failed_to_update_status), Toast.LENGTH_SHORT).show();
             });
         });
 
-        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+        builder.setNegativeButton(getString(R.string.cancel), (dialog, which) -> dialog.dismiss());
         builder.show();
     }
 }

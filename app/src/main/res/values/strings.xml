@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ServiceLink</string>
+    <string name="app_name">حماة الوطن</string>
     <string name="email">عنوان البريد الإلكتروني</string>
     <string name="password">كلمة المرور</string>
     <string name="signup">إنشاء حساب</string>
@@ -94,12 +94,18 @@
     <string name="failed_to_add_round">فشلت إضافة الدورة</string>
     <string name="manager">مدير</string>
     <string name="eligible">مؤهل</string>
+    <string name="court">أمر محكمة</string>
+    <string name="warrant">مذكرة اعتقال</string>
     <string name="penalis">معاقب</string>
     <string name="exempt">معفى</string>
     <string name="loading">جارٍ التحميل...</string>
     <string name="recruiting_round_alert">تنبيه جولة التجنيد</string>
     <string name="there_s_recruiting_round_that_has_not_ended_yet">هناك جولة تجنيد لم تنتهِ بعد!</string>
     <string name="no_active_recruiting_round_at_the_moment">لا توجد جولة تجنيد نشطة في الوقت الحالي.</string>
+    <string name="status_updated_successfully">تم تحديث الحالة بنجاح</string>
+    <string name="failed_to_update_status">فشل في تحديث الحالة</string>
+    <string name="change_status">تغيير الحالة</string>
+
 
 
 </resources>
