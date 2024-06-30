@@ -44,6 +44,12 @@ public class RecruitingManager {
 
         });
     }
+    // Add the updateRound method in RecruitingManager
+    public void updateRound(ArmyRecruitingRound round, OnRoundAddedListener listener) {
+        roundsRef.document(round.getId()).set(round)
+                .addOnSuccessListener(aVoid -> listener.onRoundAdded(true, round))
+                .addOnFailureListener(e -> listener.onRoundAdded(false, null));
+    }
 
     // Method to get all recruiting rounds
     public void getAllRounds(OnRoundsFetchedListener listener) {

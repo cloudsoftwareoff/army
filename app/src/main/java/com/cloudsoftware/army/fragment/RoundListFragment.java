@@ -1,5 +1,6 @@
 package com.cloudsoftware.army.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.cloudsoftware.army.AddRoundActivity;
 import com.cloudsoftware.army.R;
 import com.cloudsoftware.army.adapters.RoundAdapter;
 import com.cloudsoftware.army.db.RecruitingManager;
@@ -20,7 +22,7 @@ import com.cloudsoftware.army.models.ArmyRecruitingRound;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RoundListFragment extends Fragment {
+public class RoundListFragment extends Fragment implements RoundAdapter.OnItemClickListener {
 
     private RecyclerView recyclerView;
     private RoundAdapter adapter;
@@ -36,7 +38,7 @@ public class RoundListFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recycler_view);
         progressBar = view.findViewById(R.id.progress_bar);
         roundList = new ArrayList<>();
-        adapter = new RoundAdapter(roundList);
+        adapter = new RoundAdapter(roundList, this);
         recruitingManager = new RecruitingManager();
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -45,6 +47,12 @@ public class RoundListFragment extends Fragment {
         loadRounds();
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadRounds();
     }
 
     private void loadRounds() {
@@ -58,8 +66,13 @@ public class RoundListFragment extends Fragment {
             } else {
                 // Handle the error
             }
-
         });
     }
-}
 
+    @Override
+    public void onItemClick(ArmyRecruitingRound round) {
+        Intent intent = new Intent(getContext(), AddRoundActivity.class);
+        intent.putExtra("round", round);
+        startActivity(intent);
+    }
+}

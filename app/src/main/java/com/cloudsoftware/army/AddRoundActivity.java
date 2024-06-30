@@ -20,6 +20,7 @@ public class AddRoundActivity extends AppCompatActivity {
 
     private EditText roundName, startDate, endDate, location;
     private RecruitingManager recruitingManager;
+    private ArmyRecruitingRound existingRound;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +38,13 @@ public class AddRoundActivity extends AppCompatActivity {
         startDate.setOnClickListener(v -> showDatePickerDialog(startDate));
         endDate.setOnClickListener(v -> showDatePickerDialog(endDate));
 
+        // Check if we are in edit mode
+        existingRound = getIntent().getParcelableExtra("round");
+        if (existingRound != null) {
+            populateFields(existingRound);
+            btnAddRound.setText(R.string.update_round);
+        }
+
         btnAddRound.setOnClickListener(v -> {
             String name = roundName.getText().toString().trim();
             String start = startDate.getText().toString().trim();
@@ -48,23 +56,22 @@ public class AddRoundActivity extends AppCompatActivity {
                 return;
             }
 
-            ArmyRecruitingRound round = new ArmyRecruitingRound();
+            if (existingRound == null) {
+                existingRound = new ArmyRecruitingRound();
+            }
 
-            round.setRoundName(name);
-            round.setStartDate(start);
-            round.setEndDate(end);
-            round.setLocation(loc);
-            round.setCandidatesId(new ArrayList<>());
-            round.setSelectedCandidatesId(new ArrayList<>());
+            existingRound.setRoundName(name);
+            existingRound.setStartDate(start);
+            existingRound.setEndDate(end);
+            existingRound.setLocation(loc);
 
-            recruitingManager.addRound(round, (isSuccess, addedRound) -> {
-                if (isSuccess) {
-                    Toast.makeText(this, R.string.round_added_successfully, Toast.LENGTH_SHORT).show();
-                    finish();
-                } else {
-                    Toast.makeText(this, R.string.failed_to_add_round, Toast.LENGTH_SHORT).show();
-                }
-            });
+            if (existingRound.getId() == null) {
+                existingRound.setCandidatesId(new ArrayList<>());
+                existingRound.setSelectedCandidatesId(new ArrayList<>());
+                addRound(existingRound);
+            } else {
+                updateRound(existingRound);
+            }
         });
     }
 
@@ -83,11 +90,40 @@ public class AddRoundActivity extends AppCompatActivity {
                 calendar.get(Calendar.DAY_OF_MONTH)
         );
         datePickerDialog.show();
-}
+    }
 
     private void updateLabel(EditText dateField, Calendar calendar) {
         String myFormat = "dd/MM/yyyy";
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.getDefault());
         dateField.setText(sdf.format(calendar.getTime()));
+    }
+
+    private void populateFields(ArmyRecruitingRound round) {
+        roundName.setText(round.getRoundName());
+        startDate.setText(round.getStartDate());
+        endDate.setText(round.getEndDate());
+        location.setText(round.getLocation());
+    }
+
+    private void addRound(ArmyRecruitingRound round) {
+        recruitingManager.addRound(round, (isSuccess, addedRound) -> {
+            if (isSuccess) {
+                Toast.makeText(this, R.string.round_added_successfully, Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                Toast.makeText(this, R.string.failed_to_add_round, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void updateRound(ArmyRecruitingRound round) {
+        recruitingManager.updateRound(round, (isSuccess, updatedRound) -> {
+            if (isSuccess) {
+                Toast.makeText(this, R.string.round_updated_successfully, Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                Toast.makeText(this, R.string.failed_to_update_round, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

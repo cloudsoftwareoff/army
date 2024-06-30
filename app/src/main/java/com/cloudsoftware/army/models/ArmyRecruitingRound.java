@@ -1,5 +1,8 @@
 package com.cloudsoftware.army.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.firebase.firestore.IgnoreExtraProperties;
 
 import java.text.ParseException;
@@ -9,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 @IgnoreExtraProperties
-public class ArmyRecruitingRound {
+public class ArmyRecruitingRound implements Parcelable {
     private String id;
     private String roundName;
     private String startDate;
@@ -17,6 +20,9 @@ public class ArmyRecruitingRound {
     private List<String> candidatesId;
     private List<String> selectedCandidatesId;
     private String location;
+
+    private static final String DATE_FORMAT = "dd/MM/yyyy";
+    private static final SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
 
     // Default constructor required for calls to DataSnapshot.getValue(ArmyRecruitingRound.class)
     public ArmyRecruitingRound() {}
@@ -90,7 +96,6 @@ public class ArmyRecruitingRound {
     }
 
     public boolean hasNotEnded() {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         try {
             Date end = sdf.parse(this.endDate);
             Date current = new Date();
@@ -99,5 +104,44 @@ public class ArmyRecruitingRound {
             e.printStackTrace();
             return false;
         }
+    }
+
+    // Parcelable implementation
+    protected ArmyRecruitingRound(Parcel in) {
+        id = in.readString();
+        roundName = in.readString();
+        startDate = in.readString();
+        endDate = in.readString();
+        candidatesId = in.createStringArrayList();
+        selectedCandidatesId = in.createStringArrayList();
+        location = in.readString();
+    }
+
+    public static final Creator<ArmyRecruitingRound> CREATOR = new Creator<ArmyRecruitingRound>() {
+        @Override
+        public ArmyRecruitingRound createFromParcel(Parcel in) {
+            return new ArmyRecruitingRound(in);
+        }
+
+        @Override
+        public ArmyRecruitingRound[] newArray(int size) {
+            return new ArmyRecruitingRound[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(roundName);
+        dest.writeString(startDate);
+        dest.writeString(endDate);
+        dest.writeStringList(candidatesId);
+        dest.writeStringList(selectedCandidatesId);
+        dest.writeString(location);
     }
 }

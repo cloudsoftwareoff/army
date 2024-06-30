@@ -11,14 +11,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.cloudsoftware.army.R;
 import com.cloudsoftware.army.models.ArmyRecruitingRound;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class RoundAdapter extends RecyclerView.Adapter<RoundAdapter.RoundViewHolder> {
 
     private List<ArmyRecruitingRound> rounds;
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+    private OnItemClickListener onItemClickListener;
 
-    public RoundAdapter(List<ArmyRecruitingRound> rounds) {
+    public RoundAdapter(List<ArmyRecruitingRound> rounds, OnItemClickListener onItemClickListener) {
         this.rounds = rounds;
+        this.onItemClickListener = onItemClickListener;
     }
 
     @NonNull
@@ -32,10 +39,22 @@ public class RoundAdapter extends RecyclerView.Adapter<RoundAdapter.RoundViewHol
     public void onBindViewHolder(@NonNull RoundViewHolder holder, int position) {
         ArmyRecruitingRound round = rounds.get(position);
         holder.roundName.setText(round.getRoundName());
-        holder.startDate.setText(holder.itemView.getContext().getString(R.string.start_date, round.getStartDate()));
-        holder.endDate.setText(holder.itemView.getContext().getString(R.string.end_date, round.getEndDate()));
+
+        try {
+            Date start = dateFormat.parse(round.getStartDate());
+            Date end = dateFormat.parse(round.getEndDate());
+            holder.startDate.setText(holder.itemView.getContext().getString(R.string.start_date, dateFormat.format(start)));
+            holder.endDate.setText(holder.itemView.getContext().getString(R.string.end_date, dateFormat.format(end)));
+        } catch (ParseException e) {
+            e.printStackTrace();
+            holder.startDate.setText(holder.itemView.getContext().getString(R.string.start_date, round.getStartDate()));
+            holder.endDate.setText(holder.itemView.getContext().getString(R.string.end_date, round.getEndDate()));
+        }
+
         holder.location.setText(holder.itemView.getContext().getString(R.string.location, round.getLocation()));
+        holder.itemView.setOnClickListener(v -> onItemClickListener.onItemClick(round));
     }
+
 
     @Override
     public int getItemCount() {
@@ -52,5 +71,9 @@ public class RoundAdapter extends RecyclerView.Adapter<RoundAdapter.RoundViewHol
             endDate = itemView.findViewById(R.id.end_date);
             location = itemView.findViewById(R.id.location);
         }
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(ArmyRecruitingRound round);
     }
 }

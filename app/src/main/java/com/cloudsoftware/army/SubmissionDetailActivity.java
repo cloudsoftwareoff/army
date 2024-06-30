@@ -30,7 +30,7 @@ public class SubmissionDetailActivity extends AppCompatActivity {
     private Button saveStatusButton;
     private Submission submission;
     private EditText noteEdit;
-
+private  List<String> statusOptionsAR, statusOptions;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,14 +57,15 @@ public class SubmissionDetailActivity extends AppCompatActivity {
 
         // citizen status adapter
         ArrayAdapter<CharSequence> citizen_status_adapter = ArrayAdapter.createFromResource(this,
-                R.array.citizen_status, android.R.layout.simple_spinner_item);
+                R.array.status_array, android.R.layout.simple_spinner_item);
         citizen_status_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         userStatusSpinner.setAdapter(citizen_status_adapter);
 
 
         // Submission adapter
-        List<String> statusOptions = Arrays.asList("pending", "approved", "rejected");
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, statusOptions);
+       statusOptions = Arrays.asList("pending", "approved", "rejected");
+         statusOptionsAR = Arrays.asList("قيد الانتظار", "مقبول", "مرفوض");
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, statusOptionsAR);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         statusSpinner.setAdapter(adapter);
 
@@ -73,9 +74,9 @@ public class SubmissionDetailActivity extends AppCompatActivity {
 
     private void displaySubmissionDetails(Submission submission) {
         cinView.setText("CIN: " + submission.getUserId());
-        dateView.setText("Date: " + submission.getSubmissionDate());
+        dateView.setText("التاريخ: " + submission.getSubmissionDate());
         typeView.setText("Type: " + submission.getSubmissionType());
-        statusView.setText("Status: " + submission.getStatus());
+        statusView.setText("الحالة: " +submission.getStatus());
 
         DocumentAdapter adapter = new DocumentAdapter(this, submission.getDocumentUrls());
         documentsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -90,7 +91,7 @@ public class SubmissionDetailActivity extends AppCompatActivity {
     }
 
     private void saveStatus() {
-        String newStatus = statusSpinner.getSelectedItem().toString();
+        String newStatus = statusOptions.get(statusSpinner.getSelectedItemPosition());
         submission.setStatus(newStatus);
         submission.setNote(noteEdit.getText().toString());
 

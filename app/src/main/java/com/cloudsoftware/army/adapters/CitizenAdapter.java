@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
 
-import com.cloudsoftware.army.CitizenDetailActivity;
+import com.cloudsoftware.army.AddCitizenActivity;
 import com.cloudsoftware.army.R;
 import com.cloudsoftware.army.Utility;
 import com.cloudsoftware.army.models.Citizen;
@@ -75,13 +75,13 @@ public class CitizenAdapter extends BaseAdapter {
         holder.cinView.setText(citizen.getCin());
 
         convertView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, CitizenDetailActivity.class);
-            intent.putExtra("CITIZEN_CIN", citizen.getCin());
-            intent.putExtra("CITIZEN_NAME", citizen.getFirstName() + " " + citizen.getLastName());
-            intent.putExtra("CITIZEN_BIRTHDATE", citizen.getBirthdate());
-            intent.putExtra("CITIZEN_GENDER", citizen.getGender());
+            Intent intent = new Intent(context, AddCitizenActivity.class);
+            intent.putExtra("EDIT_MODE", true);
+            intent.putExtra("CITIZEN", citizen);
             context.startActivity(intent);
         });
+
+
 
         convertView.setOnLongClickListener(v -> {
             if (longClickListener != null) {
@@ -99,5 +99,8 @@ public class CitizenAdapter extends BaseAdapter {
         TextView cinView;
         TextView user_age;
     }
-}
 
+    public interface OnCitizenLongClickListener {
+        void onCitizenLongClick(Citizen citizen);
+    }
+}

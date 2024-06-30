@@ -12,7 +12,17 @@
         <item>رفض</item>
     </string-array>
 
+    <string-array name="gender_array">
+        <item>ذكر</item>
+        <item>أنثى</item>
+    </string-array>
 
+    <string-array name="status_array">
+        <item>مؤهل</item>
+        <item>استدعاء محكمة</item>
+        <item>مذكرة اعتقال</item>
+        <item>معفى</item>
+    </string-array>
     <string-array name="citizen_status">
         <item>Eligible</item>
         <item>Court</item>
@@ -28,18 +38,18 @@
     <string name="todo">مهام</string>
     <string name="about_us">معلومات عنا</string>
     <string name="log_out">تسجيل الخروج</string>
-    <string name="view_submission">عرض الإرسال</string>
+    <string name="view_submission">عرض التقديمات</string>
     <string name="citizen_details">تفاصيل المواطن</string>
     <string name="citizen_mangement">إدارة المواطنين</string>
     <string name="citizen_list">قائمة المواطنين:</string>
     <string name="aministration">إدارة</string>
     <string name="citizen">مواطن</string>
-    <string name="submission_details">تفاصيل الإرسال</string>
+    <string name="submission_details">تفاصيل التقديم</string>
     <string name="documents">المستندات:</string>
-    <string name="submission_statue">حالة الإرسال</string>
+    <string name="submission_statue">حالة التقديم</string>
     <string name="citizen_status">حالة المواطن</string>
     <string name="save">حفظ</string>
-    <string name="submission_list">قائمة الإرسالات</string>
+    <string name="submission_list">قائمة التقديمات</string>
     <string name="userdata">بيانات المستخدم</string>
     <string name="new_submission">إرسال جديد</string>
     <string name="pick_file">اختر ملف</string>
@@ -105,7 +115,13 @@
     <string name="status_updated_successfully">تم تحديث الحالة بنجاح</string>
     <string name="failed_to_update_status">فشل في تحديث الحالة</string>
     <string name="change_status">تغيير الحالة</string>
-
+    <string name="update_round">تحديث الدورة</string>
+    <string name="round_updated_successfully">تم تحديث بنجاح</string>
+    <string name="failed_to_update_round">فشل في تحديث \n</string>
+    <string name="last_name">اللقب</string>
+    <string name="add_citizen">اضافة مواطن</string>
+    <string name="update_citizen">تحديث المواطن</string>
+    <string name="no_submissions_available">لا يوجد تقديمات متاحة</string>
 
 
 </resources>

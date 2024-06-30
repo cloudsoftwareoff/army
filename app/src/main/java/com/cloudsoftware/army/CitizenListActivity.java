@@ -1,5 +1,6 @@
 package com.cloudsoftware.army;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -39,6 +40,12 @@ public class CitizenListActivity extends AppCompatActivity {
         ViewPager2 viewPager = findViewById(R.id.view_pager);
         TabLayout tabLayout = findViewById(R.id.tab_layout);
         ImageView go_back=findViewById(R.id.goback);
+        ImageView add_citizen=findViewById(R.id.add_citizen);
+
+        add_citizen.setOnClickListener(v->{
+            Intent intent = new Intent(this, AddCitizenActivity.class);
+            startActivity(intent);
+        });
         go_back.setOnClickListener(v->{
             finish();
         });

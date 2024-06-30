@@ -25,6 +25,22 @@ public class CitizenRepository {
         void onStatusUpdateFailed();
     }
 
+    public void addCitizen(Citizen citizen, Runnable onSuccess, Runnable onFailure) {
+        db.collection("citizens")
+                .document(citizen.getCin())
+                .set(citizen)
+                .addOnSuccessListener(aVoid -> onSuccess.run())
+                .addOnFailureListener(e -> onFailure.run());
+    }
+
+    public void updateCitizen(Citizen citizen, Runnable onSuccess, Runnable onFailure) {
+        db.collection("citizens")
+                .document(citizen.getCin())
+                .set(citizen, SetOptions.merge())
+                .addOnSuccessListener(aVoid -> onSuccess.run())
+                .addOnFailureListener(e -> onFailure.run());
+    }
+
     public void updateCitizenStatus(String userId, String newStatus, Runnable onSuccess, Runnable onFailure) {
         Map<String, Object> data = new HashMap<>();
         data.put("status", newStatus);
@@ -41,7 +57,6 @@ public class CitizenRepository {
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null) {
-
                         for (DocumentSnapshot document : task.getResult()) {
                             Citizen citizen = document.toObject(Citizen.class);
                             if (citizen != null) {
@@ -57,6 +72,7 @@ public class CitizenRepository {
                 })
                 .addOnFailureListener(e -> onFailure.run());
     }
+
     public void fetchCitizensByStatuses(List<String> statuses, Consumer<List<Citizen>> onSuccess, Runnable onFailure) {
         db.collection("citizens")
                 .whereIn("status", statuses)
@@ -74,6 +90,7 @@ public class CitizenRepository {
                     }
                 });
     }
+
     public void changeCitizenStatus(String userId, String status, Runnable onSuccess, Runnable onFailure) {
         Map<String, Object> data = new HashMap<>();
         data.put("status", status);
