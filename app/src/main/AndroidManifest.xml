@@ -13,6 +13,9 @@
         android:theme="@style/Theme.Army"
         tools:targetApi="31">
         <activity
+            android:name=".CitizenListInroundActivity"
+            android:exported="false" />
+        <activity
             android:name=".AddCitizenActivity"
             android:exported="false" />
         <activity

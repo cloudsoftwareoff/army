@@ -32,7 +32,18 @@ public class CitizenRepository {
                 .addOnSuccessListener(aVoid -> onSuccess.run())
                 .addOnFailureListener(e -> onFailure.run());
     }
-
+    public void fetchCitizenById(String id, OnCitizenFetchedListener listener) {
+        db.collection("citizens").document(id).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    Citizen citizen = documentSnapshot.toObject(Citizen.class);
+                    listener.onFetched(citizen);
+                })
+                .addOnFailureListener(e -> listener.onError());
+    }
+    public interface OnCitizenFetchedListener {
+        void onFetched(Citizen citizen);
+        void onError();
+    }
     public void updateCitizen(Citizen citizen, Runnable onSuccess, Runnable onFailure) {
         db.collection("citizens")
                 .document(citizen.getCin())

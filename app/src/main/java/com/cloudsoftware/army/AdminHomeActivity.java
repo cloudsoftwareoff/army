@@ -35,11 +35,13 @@ public class AdminHomeActivity extends AppCompatActivity {
         DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
         LinearLayout drawer = findViewById(R.id._nav_view);
         LinearLayout log_out = drawer.findViewById(R.id.logout);
+
         LinearLayout view_citizen=findViewById(R.id.manage_citizen);
         TextView user_email=findViewById(R.id.user_email);
         ImageView menu = findViewById(R.id.menu);
         ImageView view_requests = findViewById(R.id.requests);
-        Button add_round=findViewById(R.id.add_round);
+        LinearLayout add_round=drawer.findViewById(R.id.add_round_linear);
+
         AtomicReference<Boolean> canAdd= new AtomicReference<>(false);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()

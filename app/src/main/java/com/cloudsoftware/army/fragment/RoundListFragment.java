@@ -9,11 +9,13 @@ import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cloudsoftware.army.AddRoundActivity;
+import com.cloudsoftware.army.CitizenListInroundActivity;
 import com.cloudsoftware.army.R;
 import com.cloudsoftware.army.adapters.RoundAdapter;
 import com.cloudsoftware.army.db.RecruitingManager;
@@ -71,8 +73,22 @@ public class RoundListFragment extends Fragment implements RoundAdapter.OnItemCl
 
     @Override
     public void onItemClick(ArmyRecruitingRound round) {
-        Intent intent = new Intent(getContext(), AddRoundActivity.class);
-        intent.putExtra("round", round);
-        startActivity(intent);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle(R.string.select_action)
+                .setItems(new String[]{getString(R.string.edit_round), getString(R.string.view_citizen_list)}, (dialog, which) -> {
+                    if (which == 0) {
+                        // Edit Round
+                        Intent intent = new Intent(getContext(), AddRoundActivity.class);
+                        intent.putExtra("round", round);
+                        startActivity(intent);
+                    } else if (which == 1) {
+                        // View Citizen List
+                        Intent intent = new Intent(getContext(), CitizenListInroundActivity.class);
+                        intent.putExtra("round", round);
+                        startActivity(intent);
+                    }
+                })
+                .show();
     }
+
 }

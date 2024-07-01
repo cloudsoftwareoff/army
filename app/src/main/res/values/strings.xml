@@ -9,7 +9,7 @@
     <string name="verify">تحقق</string>
     <string-array name="submission_types">
         <item>انضمام</item>
-        <item>رفض</item>
+        <item>اعتراض</item>
     </string-array>
 
     <string-array name="gender_array">
@@ -122,6 +122,10 @@
     <string name="add_citizen">اضافة مواطن</string>
     <string name="update_citizen">تحديث المواطن</string>
     <string name="no_submissions_available">لا يوجد تقديمات متاحة</string>
+    <string name="select_action">اختر إجراء</string>
+    <string name="edit_round">تعديل الدورة</string>
+    <string name="view_citizen_list">عرض قائمة المواطنين</string>
+    <string name="signing_in">تسجيل الدخول...</string>
 
 
 </resources>

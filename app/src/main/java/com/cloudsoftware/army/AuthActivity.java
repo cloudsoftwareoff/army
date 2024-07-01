@@ -54,7 +54,7 @@ private FirebaseFirestore db;
     private void performLogin(String email, String password) {
         SharedPreferences sharedPreferences = getSharedPreferences("my_prefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        ProgressDialog progressDialog = ProgressDialog.show(AuthActivity.this, "", "Signing in...", true);
+        ProgressDialog progressDialog = ProgressDialog.show(AuthActivity.this, "", getString(R.string.signing_in), true);
 
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, task -> {
             if (task.isSuccessful()) {
